@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 services:
@@ -5,6 +6,11 @@ services:
     build: ./backend
     ports:
       - "3000:3000"
+    environment:
+      # Añadimos la URI de conexión para que tu código en Node.js pueda leerla
+      - MONGO_URI=mongodb://admin:password123@db:27017/mi_proyecto_db?authSource=admin
+    depends_on:
+      - db # Nos aseguramos de que la base de datos arranque antes que el backend
 
   frontend:
     build: ./frontend
@@ -14,11 +20,15 @@ services:
       - backend
 
   db:
-    image: postgres:15-alpine
+    image: mongo:latest # Cambiamos la imagen de postgres a mongo
+    ports:
+      - "27017:27017" # Exponemos el puerto de Mongo (útil si quieres usar MongoDB Compass)
     environment:
-      POSTGRES_PASSWORD: password123
+      # Variables de entorno específicas de MongoDB para crear un usuario administrador
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mongodata:/data/db # Cambiamos la ruta del volumen a la que usa MongoDB internamente
 
 volumes:
-  pgdata:
+  mongodata: 
