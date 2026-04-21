@@ -1,0 +1,34 @@
+<div class="contenedor-principal">
+  <div class="tarjeta">
+    <h2>Crear Muestra</h2>
+
+    <label>Espectrómetro</label>
+    <select [(ngModel)]="registro.espectrometro" (change)="cambiarEspectrometro($event)">
+      <option *ngFor="let e of espectrometros" [value]="e._id">{{e.nombre}}</option>
+    </select>
+
+    <label>Sondas</label>
+    <select [(ngModel)]="registro.sonda">
+      <option *ngFor="let s of sondasDisponibles" [value]="s">{{s}}</option>
+    </select>
+
+    <label>Fecha Entrada</label>
+    <input type="date" [(ngModel)]="registro.fechaEntrada">
+
+    <label>Usuario</label>
+    <input type="text" [(ngModel)]="registro.usuarioEntrada">
+
+    <label>Nombre de la muestra</label>
+    <input type="text" [(ngModel)]="registro.muestra">
+
+    <label>Id Solicitud</label>
+    <input type="text" [(ngModel)]="registro.idSolicitud">
+
+    <div class="checkbox-group">
+      <input type="checkbox" [(ngModel)]="registro.finalizado"> Finalizado
+      <input type="checkbox" [(ngModel)]="registro.recuperarMuestra"> Recuperar Muestra
+    </div>
+
+    <button (click)="guardar()">Guardar Muestra</button>
+  </div>
+</div>

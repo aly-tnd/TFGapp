@@ -1,6 +1,6 @@
-import { EspectrometroEntity } from "../../entities/espectrometro.entity";
-import { EspectrometroRepository } from "../../repositories/espectrometro.repository";
-import { EspectrometroModel } from "./models/espectrometro.model";
+import { EspectrometroEntity } from '../../entities/espectrometro.entity';
+import { EspectrometroRepository } from '../../repositories/espectrometro.repository';
+import { EspectrometroModel } from './models/espectrometro.model';
 
 export class MongoEspectrometroRepository implements EspectrometroRepository {
   async guardar(entidad: EspectrometroEntity): Promise<EspectrometroEntity> {
@@ -9,5 +9,11 @@ export class MongoEspectrometroRepository implements EspectrometroRepository {
       sondas: entidad.sondas
     });
     return new EspectrometroEntity(nuevo.id, nuevo.nombre, nuevo.sondas);
+  }
+
+  // AÑADE ESTO:
+  async obtenerTodos(): Promise<EspectrometroEntity[]> {
+    const documentos = await EspectrometroModel.find();
+    return documentos.map(doc => new EspectrometroEntity(doc.id, doc.nombre, doc.sondas));
   }
 }
