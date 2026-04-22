@@ -4,12 +4,18 @@
     
     <div>
       <label>Nombre del Laboratorio</label>
-      <input type="text" [(ngModel)]="nombre" placeholder="Ej: Laboratorio Central">
+      <input type="text" 
+             name="userName"
+             [(ngModel)]="usuario.name" 
+             placeholder="Ej: Laboratorio Central">
     </div>
 
     <div>
       <label>Correo Electrónico</label>
-      <input type="email" [(ngModel)]="email" placeholder="usuario@empresa.com">
+      <input type="email" 
+             name="userEmail"
+             [(ngModel)]="usuario.email" 
+             placeholder="usuario@empresa.com">
     </div>
 
     <button (click)="guardarUsuario()">

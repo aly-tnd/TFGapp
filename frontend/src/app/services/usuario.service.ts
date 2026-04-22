@@ -8,11 +8,15 @@ import { Usuario } from '../ApiGestionFront/class/usuario';
   providedIn: 'root'
 })
 export class GestionUsuariosService {
-  private apiUrl = 'http://localhost:3000/users';
+  private readonly apiUrl = 'http://localhost:3000/api/usuarios';
 
   constructor(private http: HttpClient) {}
 
   crearUsuario(usuario: Usuario): Observable<Usuario> {
     return this.http.post<Usuario>(this.apiUrl, usuario);
   }
+
+ listar(): Observable<Usuario[]> {
+  return this.http.get<Usuario[]>(this.apiUrl);
+}
 }

@@ -1,8 +1,7 @@
-export class User {
+export class UserEntity {
   constructor(
-    public readonly id: string,
-    public name: string,
-    public email: string,
-    public labData: any
+    public readonly nombre: string,
+    public readonly email: string,
+    public readonly id?: string
   ) {}
 }

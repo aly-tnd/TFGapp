@@ -1,7 +1,8 @@
-import { User } from "../entities/user.entity";
-
+import { UserEntity } from "../entities/user.entity";
 
 export interface UserRepository {
-  save(user: User): Promise<User>;
-  // findByEmail(email: string): Promise<User | null>;
+  save(user: UserEntity): Promise<UserEntity>;
+  
+  // Añadimos el método para listar aquí:
+  findAll(): Promise<UserEntity[]>; 
 }

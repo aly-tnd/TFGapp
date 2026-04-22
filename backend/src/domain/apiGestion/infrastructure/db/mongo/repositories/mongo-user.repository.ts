@@ -1,15 +1,33 @@
-import { UserRepository } from "../../../../domain/repositories/user.repository";
-import { User } from "../../../../domain/entities/user.entity";
+import { UserEntity } from "../../../../domain/entities/user.entity";
 import { UserModel } from "../../user.schema";
+import { UserRepository } from "./user.repository";
 
 export class MongoUserRepository implements UserRepository {
-  async save(user: User): Promise<User> {
+  
+  async save(user: UserEntity): Promise<UserEntity> {
+    // Entidad (nombre) -> DB (name)
     const created = await UserModel.create({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      labData: user.labData,
+      name: user.nombre,
+      email: user.email
     });
-    return new User(created._id, created.name, created.email, created.labData);
+
+    // DB (name) -> Entidad (nombre)
+    return new UserEntity(
+      created.name as string, 
+      created.email as string, 
+      created._id.toString()
+    );
+  }
+
+  async findAll(): Promise<UserEntity[]> {
+    // Buscamos todos los documentos en Mongo
+    const users = await UserModel.find();
+
+    // Mapeamos el array de documentos de Mongo al array de Entidades de dominio
+    return users.map(user => new UserEntity(
+      user.name as string,   // DB (name) -> Entidad (nombre)
+      user.email as string, 
+      user._id.toString()
+    ));
   }
 }
