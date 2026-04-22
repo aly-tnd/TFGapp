@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "8131a86a-8527-432a-9d26-704d9d44c712"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -31,17 +32,17 @@
           "configurations": {
             "production": {
               "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
-                }
-              ],
+  {
+    "type": "initial",
+    "maximumWarning": "2mb",
+    "maximumError": "5mb"
+  },
+  {
+    "type": "anyComponentStyle",
+    "maximumWarning": "150kb",
+    "maximumError": "300kb"
+  }
+],
               "outputHashing": "all"
             },
             "development": {

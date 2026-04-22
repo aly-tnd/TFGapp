@@ -3,7 +3,7 @@
     <h2>Crear Muestra</h2>
 
     <label>Espectrómetro</label>
-    <select [(ngModel)]="registro.espectrometro" (change)="cambiarEspectrometro($event)">
+    <select [(ngModel)]="registro.espectrometro" (change)="cambiarEspectrometro()">
       <option *ngFor="let e of espectrometros" [value]="e._id">{{e.nombre}}</option>
     </select>
 
