@@ -9,7 +9,7 @@ import { EspectrometroService } from '../../../services/espectrometro.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './crear-espectrometro.component.html',
-  styleUrls: ['./crear-espectrometro.component.css']
+  styleUrls: ['./crear-espectrometro.component.scss']
 })
 export class CrearEspectrometroComponent {
   nombre: string = '';

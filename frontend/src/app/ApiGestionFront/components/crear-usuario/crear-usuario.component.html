@@ -1,25 +1,31 @@
-<div class="contenedor-principal">
-  <div class="tarjeta">
-    <h2>Crear Nuevo Usuario</h2>
-    
-    <div>
-      <label>Nombre del Laboratorio</label>
-      <input type="text" 
-             name="userName"
-             [(ngModel)]="usuario.name" 
-             placeholder="Ej: Laboratorio Central">
+<div class="container largo">
+  <section class="row">
+    <div class="col">
+      <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
+        <mat-label>Nombre del Laboratorio</mat-label>
+        <input matInput placeholder="Ej: Laboratorio Central" type="text" [(ngModel)]="usuario.name">
+      </mat-form-field>
     </div>
+  </section>
 
-    <div>
-      <label>Correo Electrónico</label>
-      <input type="email" 
-             name="userEmail"
-             [(ngModel)]="usuario.email" 
-             placeholder="usuario@empresa.com">
+  <section class="row">
+    <div class="col">
+      <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
+        <mat-label>Correo Electrónico</mat-label>
+        <input matInput placeholder="usuario@empresa.com" type="email" [(ngModel)]="usuario.email">
+      </mat-form-field>
     </div>
+  </section>
 
-    <button (click)="guardarUsuario()">
-      Guardar Usuario
+  <section class="row flex_button_inline" style="display: flex; gap: 10px; margin-top: 15px;">
+    <button mat-raised-button color="warn" routerLink="/listar-usuarios">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
     </button>
-  </div>
+
+    <button mat-raised-button color="primary" (click)="guardarUsuario()">
+      Guardar
+      <mat-icon>save</mat-icon>
+    </button>
+  </section>
 </div>

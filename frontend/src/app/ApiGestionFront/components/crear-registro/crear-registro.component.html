@@ -1,34 +1,46 @@
-<div class="contenedor-principal">
-  <div class="tarjeta">
-    <h2>Crear Muestra</h2>
+<div class="contenedor-formulario">
+  <h2>Crear Muestra</h2>
 
-    <label>Espectrómetro</label>
-    <select [(ngModel)]="registro.espectrometro" (change)="cambiarEspectrometro()">
-      <option *ngFor="let e of espectrometros" [value]="e._id">{{e.nombre}}</option>
-    </select>
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Espectrómetro</mat-label>
+    <mat-select [(ngModel)]="registro.espectrometro" (selectionChange)="actualizarSondas()">
+      <mat-option *ngFor="let esp of listaEspectrometros" [value]="esp">{{ esp }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <label>Sondas</label>
-    <select [(ngModel)]="registro.sonda">
-      <option *ngFor="let s of sondasDisponibles" [value]="s">{{s}}</option>
-    </select>
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Sondas</mat-label>
+    <mat-select [(ngModel)]="registro.sonda" [disabled]="!registro.espectrometro">
+      <mat-option *ngFor="let sonda of sondasDisponibles" [value]="sonda">{{ sonda }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <label>Fecha Entrada</label>
-    <input type="date" [(ngModel)]="registro.fechaEntrada">
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Fecha Entrada</mat-label>
+    <input matInput type="date" [(ngModel)]="registro.fechaEntrada">
+  </mat-form-field>
 
-    <label>Usuario</label>
-    <input type="text" [(ngModel)]="registro.usuarioEntrada">
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Usuario</mat-label>
+    <input matInput type="text" [(ngModel)]="registro.usuario">
+  </mat-form-field>
 
-    <label>Nombre de la muestra</label>
-    <input type="text" [(ngModel)]="registro.muestra">
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Nombre de la muestra</mat-label>
+    <input matInput type="text" [(ngModel)]="registro.nombreMuestra">
+  </mat-form-field>
 
-    <label>Id Solicitud</label>
-    <input type="text" [(ngModel)]="registro.idSolicitud">
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Id Solicitud</mat-label>
+    <input matInput type="text" [(ngModel)]="registro.idSolicitud">
+  </mat-form-field>
 
-    <div class="checkbox-group">
-      <input type="checkbox" [(ngModel)]="registro.finalizado"> Finalizado
-      <input type="checkbox" [(ngModel)]="registro.recuperarMuestra"> Recuperar Muestra
-    </div>
-
-    <button (click)="guardar()">Guardar Muestra</button>
+  <div class="opciones-checkbox">
+    <mat-checkbox [(ngModel)]="registro.finalizado" color="primary">Finalizado</mat-checkbox>
+    <mat-checkbox [(ngModel)]="registro.recuperarMuestra" color="primary">Recuperar Muestra</mat-checkbox>
   </div>
+
+  <button mat-raised-button color="primary" class="boton-guardar" (click)="guardarMuestra()">
+    Guardar Muestra
+  </button>
 </div>

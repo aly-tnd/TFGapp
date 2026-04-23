@@ -1,5 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
+/* Importar estilos core de ag-grid y el tema Alpine */
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
 
-/* Opcional: Un poco de margen para que el menú no pegue al borde */
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Tema base para que los botones tengan color y forma */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Fuente oficial para que funcione el <mat-icon> */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');

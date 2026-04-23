@@ -2,6 +2,8 @@
   "dependencies": {
     "@angular/cdk": "^21.2.7",
     "@angular/material": "^21.2.7",
+    "ag-grid-angular": "^35.2.1",
+    "ag-grid-community": "^35.2.1",
     "cors": "^2.8.6",
     "mongoose": "^9.5.0",
     "uuid": "^13.0.0"
