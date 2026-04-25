@@ -31,4 +31,4 @@ services:
       - mongodata:/data/db # Cambiamos la ruta del volumen a la que usa MongoDB internamente
 
 volumes:
-  mongodata: 
+  mongodata:

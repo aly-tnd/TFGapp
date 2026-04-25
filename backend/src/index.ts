@@ -3,7 +3,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { ApiController } from './domain/apiGestion/http/controllers/api.controller';
 
-
 const app = express();
 const apiController = new ApiController();
 
