@@ -35,9 +35,19 @@ export class ListaUsuariosComponent implements OnInit {
 
   // Configuración de las columnas de Ag-Grid
   public columnDefs: ColDef[] = [
-    // Cambia field: 'name' a field: 'nombre'
-    { field: 'nombre', headerName: 'Nombre', flex: 1, sortable: true, filter: true },
-    { field: 'email', headerName: 'Correo Electrónico', flex: 1, sortable: true, filter: true }
+    { field: 'nombre', headerName: 'Nombre', flex: 1 },
+    { field: 'email', headerName: 'Correo Electrónico', flex: 1 },
+    { 
+      colId: 'acciones', // <-- AÑADIMOS ESTO
+      headerName: 'Acciones', 
+      flex: 0.5,
+      valueGetter: () => 'Ver Muestras',
+      cellStyle: { color: '#1976d2', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' },
+      onCellClicked: (params: any) => {
+        const userId = params.data.id || params.data._id; // Ojo, comprueba si usas id o _id
+        window.location.href = `/usuario/${userId}`;
+      }
+    }
   ];
 
   constructor(private usuarioService: GestionUsuariosService) {}
@@ -60,6 +70,6 @@ export class ListaUsuariosComponent implements OnInit {
 
   // Ajusta las columnas al ancho de la pantalla cuando la tabla carga
   onGridReady(params: GridReadyEvent) {
-    params.api.sizeColumnsToFit();
+    
   }
 }

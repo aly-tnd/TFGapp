@@ -19,4 +19,9 @@ export class GestionUsuariosService {
  listar(): Observable<Usuario[]> {
   return this.http.get<Usuario[]>(this.apiUrl);
 }
+
+getUsuarioConMuestras(id: string): Observable<any> {
+    // Esto llamará a http://localhost:3000/api/usuarios/ID_DEL_USUARIO/muestras
+    return this.http.get<any>(`${this.apiUrl}/${id}/muestras`);
+  }
 }

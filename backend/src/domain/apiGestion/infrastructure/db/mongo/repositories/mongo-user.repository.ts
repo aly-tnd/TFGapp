@@ -30,4 +30,16 @@ export class MongoUserRepository implements UserRepository {
       user._id.toString()
     ));
   }
+
+
+  async findById(id: string): Promise<UserEntity | null> {
+    const user = await UserModel.findById(id);
+    if (!user) return null;
+    
+    return new UserEntity(
+      user.name as string, 
+      user.email as string, 
+      user._id.toString()
+    );
+  }
 }

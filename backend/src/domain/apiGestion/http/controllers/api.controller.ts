@@ -3,6 +3,8 @@ import { CreateUserUseCase } from '../../application/use-cases/create-user.use-c
 import { MongoUserRepository } from '../../infrastructure/db/mongo/repositories/mongo-user.repository';
 import { ListUsersUseCase } from '../../application/use-cases/listar-usuarios.use-cases';
 import { UserEntity } from '../../domain/entities/user.entity'; // Importa la entidad
+import { MongoRegistroRepository } from '../../infrastructure/db/mongo/repositories/MongoRegistroRepository';
+import { ObtenerUsuarioYMuestrasUseCase } from '../../application/use-cases/obtener-usuario-muestras.use-case';
 
 export class ApiController {
   async create(req: Request, res: Response) {
@@ -37,4 +39,30 @@ export class ApiController {
       res.status(500).json({ error: 'Error al listar usuarios' });
     }
   }
+
+  async getUserAndMuestras(req: Request, res: Response) {
+    try {
+      const userId = String(req.params.id);
+      // Instanciamos los repositorios
+      const userRepo = new MongoUserRepository();
+      const registroRepo = new MongoRegistroRepository();
+
+      // Pasamos las dependencias al caso de uso
+      const useCase = new ObtenerUsuarioYMuestrasUseCase(userRepo, registroRepo);
+
+      // Ejecutamos la lógica
+      const data = await useCase.execute(userId);
+
+      return res.status(200).json(data);
+    } catch (error: unknown) {
+      console.error("❌ Error al obtener usuario y muestras:", error);
+      
+      if (error instanceof Error && error.message === "Usuario no encontrado") {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  }
+
+  
 }

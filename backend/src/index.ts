@@ -24,4 +24,6 @@ app.post('/api/usuarios', (req, res) => apiController.create(req, res));
 
 app.get('/api/usuarios', (req, res) => apiController.getAll(req, res));
 
+app.get('/api/usuarios/:id/muestras', (req, res) => apiController.getUserAndMuestras(req, res));
+
 app.listen(3000, () => console.log('Servidor en puerto 3000'));

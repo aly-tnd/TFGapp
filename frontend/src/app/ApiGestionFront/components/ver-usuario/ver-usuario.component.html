@@ -1,0 +1,34 @@
+<div class="ver-usuario-container" *ngIf="usuario">
+  
+  <div class="header-actions">
+    <button mat-button color="primary" routerLink="/listar-usuarios">
+      <mat-icon>arrow_back</mat-icon> Volver al listado
+    </button>
+  </div>
+
+  <mat-card class="usuario-card">
+    <mat-card-header>
+      <div mat-card-avatar class="avatar-placeholder">
+        <mat-icon>person</mat-icon>
+      </div>
+      <mat-card-title>Técnico: {{ usuario.nombre }}</mat-card-title>
+      <mat-card-subtitle>{{ usuario.email }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <div class="tabla-container">
+    <h3>Muestras Asignadas ({{ muestras.length }})</h3>
+    <ag-grid-angular
+      class="ag-theme-alpine grid-muestras"
+      [rowData]="muestras"
+      [columnDefs]="columnDefs"
+      [pagination]="true"
+      [paginationPageSize]="10">
+    </ag-grid-angular>
+  </div>
+
+</div>
+
+<div *ngIf="!usuario" class="loading">
+  <p>Cargando información...</p>
+</div>
