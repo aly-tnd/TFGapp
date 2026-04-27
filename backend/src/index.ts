@@ -19,10 +19,18 @@ mongoose.connect(MONGO_URI)
 app.get('/', (req, res) => res.send('Backend operativo'));
 
 // ESTA ES LA RUTA QUE SALVA LOS DATOS
+
+app.post('/api/login', (req, res) => apiController.login(req, res));
+
 app.post('/api/usuarios', (req, res) => apiController.create(req, res));
 
 app.get('/api/usuarios', (req, res) => apiController.getAll(req, res));
 
 app.get('/api/usuarios/:id/muestras', (req, res) => apiController.getUserAndMuestras(req, res));
+
+app.post('/api/registros', (req, res) => apiController.createRegistro(req, res));
+
+app.delete('/api/usuarios/:id', (req, res) => apiController.deleteUser(req, res));
+
 
 app.listen(3000, () => console.log('Servidor en puerto 3000'));

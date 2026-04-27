@@ -12,19 +12,18 @@ export class ApiController {
       const repo = new MongoUserRepository();
       const useCase = new CreateUserUseCase(repo);
 
-      // 1. Extraemos los datos que vienen de Angular (que usa 'name')
-      const { name, email } = req.body;
+      // 1. Extraemos también password y rol
+      const { name, email, password, rol } = req.body;
 
-      // 2. Creamos una instancia real de la Entidad
-      // El primer parámetro es 'nombre', así que le pasamos 'name'
-      const userEntity = new UserEntity(name, email);
+      // 2. Pasamos todo a la Entidad (Asegúrate de que tu UserEntity acepte estos 4 parámetros)
+      const userEntity = new UserEntity(name, email, undefined, password, rol);
 
-      // 3. Pasamos la ENTIDAD al caso de uso, no el body crudo
+      // 3. Ejecutamos
       const result = await useCase.execute(userEntity);
 
       return res.status(201).json(result);
     } catch (error) {
-      console.error("❌ Error detallado en el Backend:", error); // Esto saldrá en docker logs
+      console.error("❌ Error detallado en el Backend:", error);
       return res.status(500).json({ error: 'Error al crear usuario en la base de datos' });
     }
   }
@@ -63,6 +62,56 @@ export class ApiController {
       return res.status(500).json({ error: 'Error interno del servidor' });
     }
   }
+  async createRegistro(req: Request, res: Response) {
+      try {
+        const registroRepo = new MongoRegistroRepository();
+        
+        // Extraemos los datos enviados desde Angular
+        const registroData = req.body;
 
-  
+        // Aquí asumimos que tienes un método 'crear' o 'save' en tu MongoRegistroRepository
+        // Ajusta el nombre del método ('crear', 'save', 'insert') según lo tengas definido en tu repo
+        const result = await registroRepo.crear(registroData); 
+
+        return res.status(201).json(result);
+      } catch (error) {
+        console.error("❌ Error al crear registro:", error);
+        return res.status(500).json({ error: 'Error al crear registro en la base de datos' });
+      }
+    }
+
+    async deleteUser(req: Request, res: Response) {
+    try {
+      const userId = String(req.params.id);
+      const repo = new MongoUserRepository();
+      
+      await repo.borrar(userId); 
+      
+      return res.status(200).json({ message: 'Usuario borrado correctamente' });
+    } catch (error) {
+      console.error("❌ Error al borrar usuario:", error);
+      return res.status(500).json({ error: 'Error al borrar el usuario' });
+    }
+  }
+
+  async login(req: Request, res: Response) {
+  try {
+    const { email, password } = req.body;
+    const repo = new MongoUserRepository();
+    const user = await repo.findByEmail(email);
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    // Devolvemos los datos del usuario (incluyendo el rol)
+    return res.status(200).json({
+      id: user._id,
+      name: user.name,
+      rol: user.rol
+    });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error en el login' });
+  }
 }
+    }

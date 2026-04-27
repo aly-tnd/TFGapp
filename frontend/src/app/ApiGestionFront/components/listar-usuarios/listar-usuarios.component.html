@@ -1,21 +1,24 @@
-<div class="container largo">
-  <section class="row">
-    <div class="col-md-12">
-      <ag-grid-angular
+<ag-grid-angular
         style="width: 100%; height: 500px;"
         class="ag-theme-alpine"
         [rowData]="usuarios"
         [columnDefs]="columnDefs"
         [pagination]="true"
+        rowSelection="multiple" 
         (gridReady)="onGridReady($event)">
       </ag-grid-angular>
-    </div>
-  </section>
 
-  <section class="row flex_button_inline" style="margin-top: 15px;">
-    <button mat-raised-button color="primary" routerLink="/nuevo-usuario">
-      <mat-icon>add</mat-icon>
-      Nuevo Usuario
-    </button>
-  </section>
-</div>
+  <section style="margin-top: 15px; display: flex; gap: 10px;">
+  <button mat-raised-button color="primary" routerLink="/nuevo-usuario">
+    <mat-icon>add</mat-icon> Nuevo Usuario
+  </button>
+  
+  <button mat-raised-button color="warn" (click)="borrarUsuarios()">
+    <mat-icon>delete</mat-icon> Borrar Usuario
+  </button>
+
+  <app-exportar-csv 
+    [datos]="datosExportar" 
+    nombreArchivo="usuarios_y_espectrometros.csv">
+  </app-exportar-csv>
+</section>

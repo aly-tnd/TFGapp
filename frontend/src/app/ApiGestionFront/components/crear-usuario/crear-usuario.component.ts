@@ -30,6 +30,8 @@ export class CrearUsuarioComponent {
   public usuario = {
     name: '',
     email: '',
+    password: '', // <-- AÑADIDO
+    rol: 'user',  // <-- AÑADIDO Y FIJO
     labData: {}
   };
 
@@ -51,6 +53,7 @@ export class CrearUsuarioComponent {
   }
 
   private limpiarFormulario() {
-    this.usuario = { name: '', email: '', labData: {} };
+    // También lo limpiamos aquí
+    this.usuario = { name: '', email: '', password: '', rol: 'user', labData: {} }; 
   }
 }

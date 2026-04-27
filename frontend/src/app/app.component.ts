@@ -18,3 +18,4 @@ import { MenuComponent } from './ApiGestionFront/components/menu/menu.component'
 export class AppComponent {
   title = 'frontend';
 }
+

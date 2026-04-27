@@ -2,49 +2,49 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-// Ag-Grid
 import { AgGridModule } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent } from 'ag-grid-community';
 
-// Angular Material
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-// Tus modelos y servicios
 import { Usuario } from '../../class/usuario';
 import { GestionUsuariosService } from '../../../services/usuario.service';
+import { ExportarCsvComponent } from '../exportar.csv/exportar-csv.component';
+
 
 @Component({
   selector: 'app-lista-usuarios',
   standalone: true,
-  // IMPORTANTE: Hay que declarar aquí todos los módulos que usa tu HTML
   imports: [
     CommonModule, 
     RouterLink, 
     AgGridModule, 
     MatButtonModule, 
-    MatIconModule
+    MatIconModule,
+    ExportarCsvComponent
   ],
   templateUrl: './listar-usuarios.component.html',
   styleUrls: ['./listar-usuarios.component.scss']
 })
 export class ListaUsuariosComponent implements OnInit {
   
-  // Datos para la tabla
   public usuarios: Usuario[] = [];
+  private gridApi: any; // <-- 1. Variable para manejar la tabla
+  public datosExportar: any[] = [];
 
-  // Configuración de las columnas de Ag-Grid
   public columnDefs: ColDef[] = [
-    { field: 'nombre', headerName: 'Nombre', flex: 1 },
+    { field: 'nombre', headerName: 'Nombre', flex: 1, checkboxSelection: true }, // <-- 2. Añadido el checkbox
     { field: 'email', headerName: 'Correo Electrónico', flex: 1 },
     { 
-      colId: 'acciones', // <-- AÑADIMOS ESTO
+      colId: 'acciones',
       headerName: 'Acciones', 
       flex: 0.5,
+      minWidth: 120,
       valueGetter: () => 'Ver Muestras',
       cellStyle: { color: '#1976d2', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' },
       onCellClicked: (params: any) => {
-        const userId = params.data.id || params.data._id; // Ojo, comprueba si usas id o _id
+        const userId = params.data.id || params.data._id;
         window.location.href = `/usuario/${userId}`;
       }
     }
@@ -58,18 +58,76 @@ export class ListaUsuariosComponent implements OnInit {
 
   cargarUsuarios(): void {
     this.usuarioService.listar().subscribe({
-      next: (data) => {
-        this.usuarios = data;
-        console.log('Usuarios recibidos:', data);
+      next: (users) => {
+        this.usuarios = users;
+        this.datosExportar = []; // Limpiamos antes de rellenar
+        
+        // 2. POR CADA USUARIO, BUSCAMOS SUS MUESTRAS
+        users.forEach((user: any) => {
+          const userId = user.id || user._id;
+          
+          this.usuarioService.getUsuarioConMuestras(userId!).subscribe({
+            next: (data) => {
+              // Si tiene muestras, creamos una fila por cada muestra
+              if (data.muestras && data.muestras.length > 0) {
+                data.muestras.forEach((m: any) => {
+                  this.datosExportar.push({
+                    Nombre: user.nombre,
+                    Email: user.email,
+                    Espectrometro: m.espectrometro,
+                    Sonda: m.sonda,
+                    Muestra: m.muestra,
+                    Fecha: new Date(m.fecha_entrada).toLocaleDateString()
+                  });
+                });
+              } else {
+                // Si no tiene muestras, exportamos al usuario vacío
+                this.datosExportar.push({
+                  Nombre: user.nombre,
+                  Email: user.email,
+                  Espectrometro: 'Sin espectrómetro',
+                  Sonda: '-',
+                  Muestra: '-',
+                  Fecha: '-'
+                });
+              }
+            }
+          });
+        });
+
       },
-      error: (err) => {
-        console.error('Error al traer usuarios:', err);
-      }
+      error: (err) => console.error('Error al traer usuarios:', err)
     });
   }
 
-  // Ajusta las columnas al ancho de la pantalla cuando la tabla carga
   onGridReady(params: GridReadyEvent) {
-    
+    this.gridApi = params.api; // <-- 3. Guardamos la instancia de la tabla
   }
+
+  // <-- 4. Función ejecutada por el botón HTML
+  borrarUsuarios() {
+    const seleccionados = this.gridApi.getSelectedRows();
+    
+    if (seleccionados.length === 0) {
+      alert('Por favor, selecciona al menos un usuario de la tabla.');
+      return;
+    }
+
+    const id = seleccionados[0].id || seleccionados[0]._id;
+    
+    if(confirm(`¿Seguro que quieres borrar a ${seleccionados[0].nombre}?`)) {
+      this.usuarioService.borrarUsuario(id).subscribe({
+        next: () => {
+          alert('Usuario borrado correctamente');
+          this.cargarUsuarios(); // Refresca la tabla automáticamente
+        },
+        error: (err) => {
+          console.error('Error al borrar:', err);
+          alert('Error al borrar el usuario');
+        }
+      });
+    }
+  }
+
+  
 }
