@@ -80,4 +80,18 @@ export class ApiController {
         return res.status(500).json({ error: 'Error al crear registro en la base de datos' });
       }
     }
+
+    async deleteUser(req: Request, res: Response) {
+    try {
+      const userId = String(req.params.id);
+      const repo = new MongoUserRepository();
+      
+      await repo.borrar(userId); 
+      
+      return res.status(200).json({ message: 'Usuario borrado correctamente' });
+    } catch (error) {
+      console.error("❌ Error al borrar usuario:", error);
+      return res.status(500).json({ error: 'Error al borrar el usuario' });
+    }
+  }
     }

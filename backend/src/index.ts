@@ -28,4 +28,6 @@ app.get('/api/usuarios/:id/muestras', (req, res) => apiController.getUserAndMues
 
 app.post('/api/registros', (req, res) => apiController.createRegistro(req, res));
 
+app.delete('/api/usuarios/:id', (req, res) => apiController.deleteUser(req, res));
+
 app.listen(3000, () => console.log('Servidor en puerto 3000'));

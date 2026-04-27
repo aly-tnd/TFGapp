@@ -42,4 +42,9 @@ export class MongoUserRepository implements UserRepository {
       user._id.toString()
     );
   }
+
+  async borrar(id: string): Promise<void> {
+    // Asegúrate de importar UserModel si no lo tienes
+    await UserModel.findByIdAndDelete(id);
+  }
 }
