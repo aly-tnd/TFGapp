@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { Usuario } from '../../class/usuario';
 import { GestionUsuariosService } from '../../../services/usuario.service';
+import { ExportarCsvComponent } from '../exportar.csv/exportar-csv.component';
+
 
 @Component({
   selector: 'app-lista-usuarios',
@@ -19,7 +21,8 @@ import { GestionUsuariosService } from '../../../services/usuario.service';
     RouterLink, 
     AgGridModule, 
     MatButtonModule, 
-    MatIconModule
+    MatIconModule,
+    ExportarCsvComponent
   ],
   templateUrl: './listar-usuarios.component.html',
   styleUrls: ['./listar-usuarios.component.scss']
@@ -28,6 +31,7 @@ export class ListaUsuariosComponent implements OnInit {
   
   public usuarios: Usuario[] = [];
   private gridApi: any; // <-- 1. Variable para manejar la tabla
+  public datosExportar: any[] = [];
 
   public columnDefs: ColDef[] = [
     { field: 'nombre', headerName: 'Nombre', flex: 1, checkboxSelection: true }, // <-- 2. Añadido el checkbox
@@ -54,8 +58,43 @@ export class ListaUsuariosComponent implements OnInit {
 
   cargarUsuarios(): void {
     this.usuarioService.listar().subscribe({
-      next: (data) => {
-        this.usuarios = data;
+      next: (users) => {
+        this.usuarios = users;
+        this.datosExportar = []; // Limpiamos antes de rellenar
+        
+        // 2. POR CADA USUARIO, BUSCAMOS SUS MUESTRAS
+        users.forEach((user: any) => {
+          const userId = user.id || user._id;
+          
+          this.usuarioService.getUsuarioConMuestras(userId!).subscribe({
+            next: (data) => {
+              // Si tiene muestras, creamos una fila por cada muestra
+              if (data.muestras && data.muestras.length > 0) {
+                data.muestras.forEach((m: any) => {
+                  this.datosExportar.push({
+                    Nombre: user.nombre,
+                    Email: user.email,
+                    Espectrometro: m.espectrometro,
+                    Sonda: m.sonda,
+                    Muestra: m.muestra,
+                    Fecha: new Date(m.fecha_entrada).toLocaleDateString()
+                  });
+                });
+              } else {
+                // Si no tiene muestras, exportamos al usuario vacío
+                this.datosExportar.push({
+                  Nombre: user.nombre,
+                  Email: user.email,
+                  Espectrometro: 'Sin espectrómetro',
+                  Sonda: '-',
+                  Muestra: '-',
+                  Fecha: '-'
+                });
+              }
+            }
+          });
+        });
+
       },
       error: (err) => console.error('Error al traer usuarios:', err)
     });
@@ -89,4 +128,6 @@ export class ListaUsuariosComponent implements OnInit {
       });
     }
   }
+
+  
 }

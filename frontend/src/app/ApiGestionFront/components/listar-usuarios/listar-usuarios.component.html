@@ -16,4 +16,9 @@
   <button mat-raised-button color="warn" (click)="borrarUsuarios()">
     <mat-icon>delete</mat-icon> Borrar Usuario
   </button>
+
+  <app-exportar-csv 
+    [datos]="datosExportar" 
+    nombreArchivo="usuarios_y_espectrometros.csv">
+  </app-exportar-csv>
 </section>
