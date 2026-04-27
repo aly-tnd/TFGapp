@@ -1,0 +1,4 @@
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* Quita márgenes raros del body */
+body { margin: 0; height: 100vh; font-family: Roboto, sans-serif; }

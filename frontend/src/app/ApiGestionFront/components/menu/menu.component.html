@@ -1,0 +1,59 @@
+<div id="sidebar">
+  <div class="row logo-container">
+    <div class="col texto">
+      <h6>Gestión de Laboratorio</h6>
+    </div>
+  </div>
+
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Administración</mat-panel-title>
+        <mat-icon>settings</mat-icon>
+      </mat-expansion-panel-header>
+
+      <section>
+        <ul class="list-unstyled">
+          <li routerLinkActive="active">
+            <a routerLink="/nuevo-usuario">
+              Gestión Usuarios
+              <mat-icon class="float-right">person</mat-icon>
+            </a>
+          </li>
+          
+          <li routerLinkActive="active">
+            <a routerLink="/listar-usuarios">
+              Listado Usuarios
+              <mat-icon class="float-right">groups</mat-icon>
+            </a>
+          </li>
+
+          <li routerLinkActive="active">
+            <a routerLink="/nuevo-espectrometro">
+              Equipos y Sondas
+              <mat-icon class="float-right">precision_manufacturing</mat-icon>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Muestras</mat-panel-title>
+        <mat-icon>science</mat-icon>
+      </mat-expansion-panel-header>
+
+      <section>
+        <ul class="list-unstyled">
+          <li routerLinkActive="active">
+            <a routerLink="/nuevo-registro">
+              Nueva Entrada
+              <mat-icon class="float-right">add_circle</mat-icon>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
