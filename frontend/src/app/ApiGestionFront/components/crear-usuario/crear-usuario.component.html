@@ -2,7 +2,7 @@
   <section class="row">
     <div class="col">
       <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
-        <mat-label>Nombre del Laboratorio</mat-label>
+        <mat-label>Nombre de Usuario</mat-label>
         <input matInput placeholder="Ej: Laboratorio Central" type="text" [(ngModel)]="usuario.name">
       </mat-form-field>
     </div>
@@ -13,6 +13,15 @@
       <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
         <mat-label>Correo Electrónico</mat-label>
         <input matInput placeholder="usuario@empresa.com" type="email" [(ngModel)]="usuario.email">
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="row">
+    <div class="col">
+      <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
+        <mat-label>Contraseña</mat-label>
+        <input matInput placeholder="Asigna una contraseña" type="password" [(ngModel)]="usuario.password">
       </mat-form-field>
     </div>
   </section>

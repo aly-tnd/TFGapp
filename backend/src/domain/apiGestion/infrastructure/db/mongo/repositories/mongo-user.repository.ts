@@ -8,7 +8,9 @@ export class MongoUserRepository implements UserRepository {
     // Entidad (nombre) -> DB (name)
     const created = await UserModel.create({
       name: user.nombre,
-      email: user.email
+      email: user.email,
+      password: user.password, // <-- FALTABA ESTO
+      rol: user.rol
     });
 
     // DB (name) -> Entidad (nombre)
@@ -47,4 +49,8 @@ export class MongoUserRepository implements UserRepository {
     // Asegúrate de importar UserModel si no lo tienes
     await UserModel.findByIdAndDelete(id);
   }
+
+  async findByEmail(email: string): Promise<any> {
+  return await UserModel.findOne({ email }).lean();
+}
 }
