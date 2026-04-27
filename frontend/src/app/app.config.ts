@@ -15,7 +15,8 @@ const routes: Routes = [
   { path: 'nuevo-registro', component: CrearRegistroComponent },
   // 2. AÑADE LA RUTA PARA LISTAR
   { path: 'listar-usuarios', component: ListaUsuariosComponent },
-  { path: 'usuario/:id', component: VerUsuarioComponent }, // :id es dinámico 
+  { path: 'usuario/:id', component: VerUsuarioComponent }, // :id es dinámico
+   
   { path: '', redirectTo: '/nuevo-usuario', pathMatch: 'full' } 
 ];
 

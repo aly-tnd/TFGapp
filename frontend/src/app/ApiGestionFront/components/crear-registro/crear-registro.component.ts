@@ -6,6 +6,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select'; // <-- Nuevo
 import { MatCheckboxModule } from '@angular/material/checkbox'; // <-- Nuevo
 import { MatButtonModule } from '@angular/material/button';
+import { OnInit } from '@angular/core'; // <-- Añade OnInit
+import { GestionUsuariosService } from '../../../services/usuario.service';
+import { RegistroService } from '../../../services/registro.service'; // Asegúrate de que la ruta sea la correcta
 
 @Component({
   selector: 'app-crear-registro',
@@ -49,6 +52,21 @@ export class CrearRegistroComponent {
     recuperarMuestra: false
   };
 
+  public listaUsuarios: any[] = []; // <-- Nueva variable
+
+  constructor(
+    private usuarioService: GestionUsuariosService,
+    private registroService: RegistroService
+  ) {}
+
+  ngOnInit() {
+    // Cargamos los usuarios al abrir el formulario
+    this.usuarioService.listar().subscribe({
+      next: (users) => this.listaUsuarios = users,
+      error: (err) => console.error('Error cargando usuarios', err)
+    });
+  }
+
   // 2. Lógica de bloqueo
   actualizarSondas() {
     // Carga las sondas correspondientes
@@ -58,7 +76,27 @@ export class CrearRegistroComponent {
   }
 
   guardarMuestra() {
-    console.log('Guardando...', this.registro);
-    // Aquí tu llamada al servicio
+    // 1. Preparamos el objeto con las claves exactas que exige el backend
+    const payload = {
+      espectrometro: this.registro.espectrometro,
+      sonda: this.registro.sonda,
+      usuario_id: this.registro.usuario,        // Traducimos usuario -> usuario_id
+      fecha_entrada: this.registro.fechaEntrada,// Traducimos fechaEntrada -> fecha_entrada
+      muestra: this.registro.nombreMuestra,     // Traducimos nombreMuestra -> muestra
+      completo: this.registro.finalizado        // Traducimos finalizado -> completo
+    };
+
+    console.log('Enviando al backend...', payload);
+    
+    // 2. Enviamos el 'payload' adaptado, NO 'this.registro' directamente
+    this.registroService.crear(payload).subscribe({
+      next: (res: any) => {
+        alert('Muestra guardada con éxito');
+      },
+      error: (err: any) => {
+        console.error('Error al guardar:', err);
+        alert('Error al guardar la muestra');
+      }
+    });
   }
 }

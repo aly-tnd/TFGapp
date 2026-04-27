@@ -20,10 +20,14 @@
     <input matInput type="date" [(ngModel)]="registro.fechaEntrada">
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="campo-completo">
-    <mat-label>Usuario</mat-label>
-    <input matInput type="text" [(ngModel)]="registro.usuario">
-  </mat-form-field>
+  <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 15px;">
+  <mat-label>Usuario</mat-label>
+  <mat-select [(ngModel)]="registro.usuario" name="usuario">
+    <mat-option *ngFor="let u of listaUsuarios" [value]="u.id || u._id">
+      {{ u.nombre }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
   <mat-form-field appearance="fill" class="campo-completo">
     <mat-label>Nombre de la muestra</mat-label>

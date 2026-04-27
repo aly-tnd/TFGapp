@@ -41,6 +41,7 @@ export class ListaUsuariosComponent implements OnInit {
       colId: 'acciones', // <-- AÑADIMOS ESTO
       headerName: 'Acciones', 
       flex: 0.5,
+      minWidth: 120,
       valueGetter: () => 'Ver Muestras',
       cellStyle: { color: '#1976d2', cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' },
       onCellClicked: (params: any) => {

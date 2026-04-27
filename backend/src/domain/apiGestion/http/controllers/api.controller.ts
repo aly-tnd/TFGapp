@@ -63,6 +63,21 @@ export class ApiController {
       return res.status(500).json({ error: 'Error interno del servidor' });
     }
   }
+  async createRegistro(req: Request, res: Response) {
+      try {
+        const registroRepo = new MongoRegistroRepository();
+        
+        // Extraemos los datos enviados desde Angular
+        const registroData = req.body;
 
-  
-}
+        // Aquí asumimos que tienes un método 'crear' o 'save' en tu MongoRegistroRepository
+        // Ajusta el nombre del método ('crear', 'save', 'insert') según lo tengas definido en tu repo
+        const result = await registroRepo.crear(registroData); 
+
+        return res.status(201).json(result);
+      } catch (error) {
+        console.error("❌ Error al crear registro:", error);
+        return res.status(500).json({ error: 'Error al crear registro en la base de datos' });
+      }
+    }
+    }
