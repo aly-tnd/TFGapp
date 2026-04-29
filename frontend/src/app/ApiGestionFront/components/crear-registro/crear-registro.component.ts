@@ -8,7 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox'; // <-- Nuevo
 import { MatButtonModule } from '@angular/material/button';
 import { OnInit } from '@angular/core'; // <-- Añade OnInit
 import { GestionUsuariosService } from '../../../services/usuario.service';
-import { RegistroService } from '../../../services/registro.service'; // Asegúrate de que la ruta sea la correcta
+import { RegistroService } from '../../../services/registro.service';
 
 @Component({
   selector: 'app-crear-registro',
@@ -22,7 +22,7 @@ import { RegistroService } from '../../../services/registro.service'; // Asegúr
 })
 export class CrearRegistroComponent {
   
-  // 1. Diccionario estricto Espectrómetro -> Sondas
+
   public mapaEspectrometros: { [key: string]: string[] } = {
     'Espectrometro Bruker Avance NEO': [
       'PI HR BB400 (5mm)', 'PA BBI400 S1 (5mm)', 'PA BBI400 DIFF (5mm)'
@@ -40,7 +40,6 @@ export class CrearRegistroComponent {
   public listaEspectrometros = Object.keys(this.mapaEspectrometros);
   public sondasDisponibles: string[] = [];
 
-  // Objeto a enviar al backend
   public registro = {
     espectrometro: '',
     sonda: '',
@@ -52,7 +51,7 @@ export class CrearRegistroComponent {
     recuperarMuestra: false
   };
 
-  public listaUsuarios: any[] = []; // <-- Nueva variable
+  public listaUsuarios: any[] = [];
 
   constructor(
     private usuarioService: GestionUsuariosService,
@@ -60,23 +59,18 @@ export class CrearRegistroComponent {
   ) {}
 
   ngOnInit() {
-    // Cargamos los usuarios al abrir el formulario
     this.usuarioService.listar().subscribe({
       next: (users) => this.listaUsuarios = users,
       error: (err) => console.error('Error cargando usuarios', err)
     });
   }
 
-  // 2. Lógica de bloqueo
   actualizarSondas() {
-    // Carga las sondas correspondientes
     this.sondasDisponibles = this.mapaEspectrometros[this.registro.espectrometro] || [];
-    // Resetea la sonda elegida si se cambia el espectrómetro
     this.registro.sonda = ''; 
   }
 
   guardarMuestra() {
-    // 1. Preparamos el objeto con las claves exactas que exige el backend
     const payload = {
       espectrometro: this.registro.espectrometro,
       sonda: this.registro.sonda,
@@ -88,7 +82,6 @@ export class CrearRegistroComponent {
 
     console.log('Enviando al backend...', payload);
     
-    // 2. Enviamos el 'payload' adaptado, NO 'this.registro' directamente
     this.registroService.crear(payload).subscribe({
       next: (res: any) => {
         alert('Muestra guardada con éxito');

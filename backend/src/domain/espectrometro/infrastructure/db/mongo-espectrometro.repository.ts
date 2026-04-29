@@ -11,7 +11,6 @@ export class MongoEspectrometroRepository implements EspectrometroRepository {
     return new EspectrometroEntity(nuevo.id, nuevo.nombre, nuevo.sondas);
   }
 
-  // AÑADE ESTO:
   async obtenerTodos(): Promise<EspectrometroEntity[]> {
     const documentos = await EspectrometroModel.find();
     return documentos.map(doc => new EspectrometroEntity(doc.id, doc.nombre, doc.sondas));

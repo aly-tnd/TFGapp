@@ -30,11 +30,11 @@ import { ExportarCsvComponent } from '../exportar.csv/exportar-csv.component';
 export class ListaUsuariosComponent implements OnInit {
   
   public usuarios: Usuario[] = [];
-  private gridApi: any; // <-- 1. Variable para manejar la tabla
+  private gridApi: any;
   public datosExportar: any[] = [];
 
   public columnDefs: ColDef[] = [
-    { field: 'nombre', headerName: 'Nombre', flex: 1, checkboxSelection: true }, // <-- 2. Añadido el checkbox
+    { field: 'nombre', headerName: 'Nombre', flex: 1, checkboxSelection: true },
     { field: 'email', headerName: 'Correo Electrónico', flex: 1 },
     { 
       colId: 'acciones',
@@ -62,7 +62,6 @@ export class ListaUsuariosComponent implements OnInit {
         this.usuarios = users;
         this.datosExportar = []; // Limpiamos antes de rellenar
         
-        // 2. POR CADA USUARIO, BUSCAMOS SUS MUESTRAS
         users.forEach((user: any) => {
           const userId = user.id || user._id;
           
@@ -101,10 +100,9 @@ export class ListaUsuariosComponent implements OnInit {
   }
 
   onGridReady(params: GridReadyEvent) {
-    this.gridApi = params.api; // <-- 3. Guardamos la instancia de la tabla
+    this.gridApi = params.api;
   }
 
-  // <-- 4. Función ejecutada por el botón HTML
   borrarUsuarios() {
     const seleccionados = this.gridApi.getSelectedRows();
     

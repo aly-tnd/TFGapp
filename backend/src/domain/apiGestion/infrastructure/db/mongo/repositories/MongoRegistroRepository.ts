@@ -9,7 +9,6 @@ export class MongoRegistroRepository {
     return registros.map(reg => RegistroMapper.toEntity(reg));
   }
 
-  // 👇 NUEVO MÉTODO PARA GUARDAR LA MUESTRA 👇
   async crear(registroData: any): Promise<any> {
     const nuevoRegistro = new RegistroModel(registroData);
     return await nuevoRegistro.save();

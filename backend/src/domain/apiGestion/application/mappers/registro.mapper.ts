@@ -3,7 +3,6 @@ import { IRegistro } from '../../infrastructure/db/registro.schema';
 import { RegistroEntity } from '../../domain/entities/registro.entity';
 
 
-// Definimos exactamente lo que devuelve .lean()
 export interface RegistroRaw extends IRegistro {
   _id: Types.ObjectId;
 }
