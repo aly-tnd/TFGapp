@@ -3,7 +3,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { ApiController } from './domain/apiGestion/http/controllers/api.controller';
 
-
 const app = express();
 const apiController = new ApiController();
 
@@ -16,10 +15,7 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ Conectado a MongoDB'))
   .catch((error) => console.error('❌ Error MongoDB:', error));
 
-// Rutas
 app.get('/', (req, res) => res.send('Backend operativo'));
-
-// ESTA ES LA RUTA QUE SALVA LOS DATOS
 
 app.post('/api/login', (req, res) => apiController.login(req, res));
 

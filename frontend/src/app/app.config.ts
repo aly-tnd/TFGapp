@@ -8,7 +8,6 @@ import { CrearRegistroComponent } from './ApiGestionFront/components/crear-regis
 import { ListaUsuariosComponent } from './ApiGestionFront/components/listar-usuarios/listar-usuarios.component';
 import { VerUsuarioComponent } from './ApiGestionFront/components/ver-usuario/ver-usuario.component';
 
-// 1. IMPORTA EL LOGIN Y LOS GUARDS (Ajusta las rutas a tus carpetas)
 import { LoginComponent } from './ApiGestionFront/components/login/login.component';
 import { adminGuard, userGuard } from './guards/auth.guard';
 
@@ -27,7 +26,7 @@ const routes: Routes = [
    
   // Redirecciones
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' } // Si escribe una URL que no existe, al login
+  { path: '**', redirectTo: '/login' }
 ];
 
 export const appConfig: ApplicationConfig = {

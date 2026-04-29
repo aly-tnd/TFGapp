@@ -12,13 +12,8 @@ export class ApiController {
       const repo = new MongoUserRepository();
       const useCase = new CreateUserUseCase(repo);
 
-      // 1. Extraemos también password y rol
       const { name, email, password, rol } = req.body;
-
-      // 2. Pasamos todo a la Entidad (Asegúrate de que tu UserEntity acepte estos 4 parámetros)
       const userEntity = new UserEntity(name, email, undefined, password, rol);
-
-      // 3. Ejecutamos
       const result = await useCase.execute(userEntity);
 
       return res.status(201).json(result);
@@ -42,14 +37,9 @@ export class ApiController {
   async getUserAndMuestras(req: Request, res: Response) {
     try {
       const userId = String(req.params.id);
-      // Instanciamos los repositorios
       const userRepo = new MongoUserRepository();
       const registroRepo = new MongoRegistroRepository();
-
-      // Pasamos las dependencias al caso de uso
       const useCase = new ObtenerUsuarioYMuestrasUseCase(userRepo, registroRepo);
-
-      // Ejecutamos la lógica
       const data = await useCase.execute(userId);
 
       return res.status(200).json(data);
@@ -65,12 +55,7 @@ export class ApiController {
   async createRegistro(req: Request, res: Response) {
       try {
         const registroRepo = new MongoRegistroRepository();
-        
-        // Extraemos los datos enviados desde Angular
         const registroData = req.body;
-
-        // Aquí asumimos que tienes un método 'crear' o 'save' en tu MongoRegistroRepository
-        // Ajusta el nombre del método ('crear', 'save', 'insert') según lo tengas definido en tu repo
         const result = await registroRepo.crear(registroData); 
 
         return res.status(201).json(result);
@@ -104,7 +89,6 @@ export class ApiController {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Devolvemos los datos del usuario (incluyendo el rol)
     return res.status(200).json({
       id: user._id,
       name: user.name,

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-// Módulos de Angular Material
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
@@ -19,8 +18,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule
   ],
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss'] // <--- Asegúrate de que termina en .scss
+  styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent {
-  // Lógica del menú
 }

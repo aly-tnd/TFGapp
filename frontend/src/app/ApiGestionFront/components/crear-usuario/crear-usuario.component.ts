@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-// Módulos de Angular Material necesarios
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,10 +18,10 @@ import { GestionUsuariosService } from "../../../services/usuario.service";
     CommonModule, 
     FormsModule,
     RouterLink,
-    MatFormFieldModule, // Para <mat-form-field> y <mat-label>
-    MatInputModule,     // Para matInput
-    MatButtonModule,    // Para mat-raised-button
-    MatIconModule       // Para <mat-icon>
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule
   ],
   templateUrl: './crear-usuario.component.html',
   styleUrls: ['./crear-usuario.component.scss']
@@ -30,8 +30,8 @@ export class CrearUsuarioComponent {
   public usuario = {
     name: '',
     email: '',
-    password: '', // <-- AÑADIDO
-    rol: 'user',  // <-- AÑADIDO Y FIJO
+    password: '',
+    rol: 'user',
     labData: {}
   };
 
@@ -53,7 +53,6 @@ export class CrearUsuarioComponent {
   }
 
   private limpiarFormulario() {
-    // También lo limpiamos aquí
-    this.usuario = { name: '', email: '', password: '', rol: 'user', labData: {} }; 
+    this.usuario = { name: '', email: '', password: '', rol: 'user', labData: {} };
   }
 }

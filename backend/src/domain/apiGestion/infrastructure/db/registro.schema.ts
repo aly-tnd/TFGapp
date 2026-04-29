@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 
-// 1. Interfaz pura (sin extends Document)
 export interface IRegistro {
   espectrometro: string;
   sonda: string;
@@ -10,7 +9,6 @@ export interface IRegistro {
   completo: boolean;
 }
 
-// 2. El resto se queda igual
 const RegistroSchema = new Schema<IRegistro>({
   espectrometro: { type: String, required: true },
   sonda: { type: String, required: true },

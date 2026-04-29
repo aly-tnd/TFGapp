@@ -13,8 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
   `
 })
 export class ExportarCsvComponent {
-  @Input() datos: any[] = []; // Recibe cualquier array de datos
-  @Input() nombreArchivo: string = 'datos.csv'; // Nombre por defecto
+  @Input() datos: any[] = [];
+  @Input() nombreArchivo: string = 'datos.csv';
   @Input() textoBoton: string = 'Exportar CSV';
 
   exportar() {
