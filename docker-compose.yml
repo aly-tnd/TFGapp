@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Añadimos la URI de conexión para que tu código en Node.js pueda leerla
+      # Añadimos la URI de conexión
       - MONGO_URI=mongodb://admin:password123@db:27017/mi_proyecto_db?authSource=admin
     depends_on:
       - db # Nos aseguramos de que la base de datos arranque antes que el backend
@@ -20,9 +20,9 @@ services:
       - backend
 
   db:
-    image: mongo:latest # Cambiamos la imagen de postgres a mongo
+    image: mongo:latest # imagen de MongoDB
     ports:
-      - "27017:27017" # Exponemos el puerto de Mongo (útil si quieres usar MongoDB Compass)
+      - "27017:27017" # puerto de MongoDB
     environment:
       # Variables de entorno específicas de MongoDB para crear un usuario administrador
       MONGO_INITDB_ROOT_USERNAME: admin
