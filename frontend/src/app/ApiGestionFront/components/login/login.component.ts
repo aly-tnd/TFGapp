@@ -15,19 +15,54 @@ export class LoginComponent {
   email = '';
   password = '';
   error = '';
+  loading = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  entrar() {
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  entrar(): void {
+    this.error = '';
+
+    if (!this.email || !this.password) {
+      this.error = 'Email y contraseña son requeridos';
+      return;
+    }
+
+    if (!this.isValidEmail(this.email)) {
+      this.error = 'Email inválido';
+      return;
+    }
+
+    this.loading = true;
+
     this.authService.login(this.email, this.password).subscribe({
       next: (user) => {
+        this.loading = false;
+        if (!user || !user.rol) {
+          this.error = 'Email o contraseña incorrectos';
+          return;
+        }
+
         if (user.rol === 'admin') {
-          this.router.navigate(['/usuarios']); // Cambia a la ruta de tu lista
+          this.router.navigate(['/listar-usuarios']);
         } else {
-          this.router.navigate(['/nueva-muestra']); // Cambia a la ruta de crear muestra
+          this.router.navigate(['/nuevo-registro']);
         }
       },
-      error: () => this.error = 'Email o contraseña incorrectos'
+      error: () => {
+        this.loading = false;
+        this.error = 'Email o contraseña incorrectos';
+      }
     });
+  }
+
+  onKeyPress(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.entrar();
+    }
   }
 }

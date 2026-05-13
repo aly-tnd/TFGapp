@@ -1,101 +1,126 @@
 import { Request, Response } from 'express';
-import { CreateUserUseCase } from '../../application/use-cases/create-user.use-cases';
-import { MongoUserRepository } from '../../infrastructure/db/mongo/repositories/mongo-user.repository';
+import { CrearUsuarioUseCase } from '../../application/use-cases/create-user.use-cases';
 import { ListUsersUseCase } from '../../application/use-cases/listar-usuarios.use-cases';
-import { UserEntity } from '../../domain/entities/user.entity'; // Importa la entidad
-import { MongoRegistroRepository } from '../../infrastructure/db/mongo/repositories/MongoRegistroRepository';
 import { ObtenerUsuarioYMuestrasUseCase } from '../../application/use-cases/obtener-usuario-muestras.use-case';
+import { LoginUseCase } from '../../application/use-cases/login.use-case';
+import { UserEntity } from '../../domain/entities/user.entity';
+import { UserRepository } from '../../domain/repositories/user.repository';
+import { RegistroRepository } from '../../domain/repositories/registro.repository';
+import { AuthService } from '../../../../shared/services/auth.service';
+import { AppError, asyncHandler } from '../../../../shared/middleware/error.middleware';
+import { AuthRequest } from '../../../../shared/middleware/auth.middleware';
 
 export class ApiController {
-  async create(req: Request, res: Response) {
-    try {
-      const repo = new MongoUserRepository();
-      const useCase = new CreateUserUseCase(repo);
+  constructor(
+    private readonly createUserUseCase: CrearUsuarioUseCase,
+    private readonly listUsersUseCase: ListUsersUseCase,
+    private readonly obtenerUsuarioYMuestrasUseCase: ObtenerUsuarioYMuestrasUseCase,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly userRepository: UserRepository,
+    private readonly registroRepository: RegistroRepository,
+    private readonly authService: AuthService
+  ) {}
 
-      const { name, email, password, rol } = req.body;
-      const userEntity = new UserEntity(name, email, undefined, password, rol);
-      const result = await useCase.execute(userEntity);
+  // Crear nuevo usuario (admin)
+  create = asyncHandler(async (req: Request, res: Response) => {
+    const { name, email, password, rol, username } = req.body;
 
-      return res.status(201).json(result);
-    } catch (error) {
-      console.error("❌ Error detallado en el Backend:", error);
-      return res.status(500).json({ error: 'Error al crear usuario en la base de datos' });
-    }
-  }
-
-  async getAll(req: Request, res: Response) {
-    try {
-      const repo = new MongoUserRepository();
-      const useCase = new ListUsersUseCase(repo);
-      const users = await useCase.execute();
-      res.json(users);
-    } catch (error) {
-      res.status(500).json({ error: 'Error al listar usuarios' });
-    }
-  }
-
-  async getUserAndMuestras(req: Request, res: Response) {
-    try {
-      const userId = String(req.params.id);
-      const userRepo = new MongoUserRepository();
-      const registroRepo = new MongoRegistroRepository();
-      const useCase = new ObtenerUsuarioYMuestrasUseCase(userRepo, registroRepo);
-      const data = await useCase.execute(userId);
-
-      return res.status(200).json(data);
-    } catch (error: unknown) {
-      console.error("❌ Error al obtener usuario y muestras:", error);
-      
-      if (error instanceof Error && error.message === "Usuario no encontrado") {
-        return res.status(404).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Error interno del servidor' });
-    }
-  }
-  async createRegistro(req: Request, res: Response) {
-      try {
-        const registroRepo = new MongoRegistroRepository();
-        const registroData = req.body;
-        const result = await registroRepo.crear(registroData); 
-
-        return res.status(201).json(result);
-      } catch (error) {
-        console.error("❌ Error al crear registro:", error);
-        return res.status(500).json({ error: 'Error al crear registro en la base de datos' });
-      }
+    if (!email || !password || !name) {
+      throw new AppError(400, 'Email, nombre y contraseña son requeridos');
     }
 
-    async deleteUser(req: Request, res: Response) {
-    try {
-      const userId = String(req.params.id);
-      const repo = new MongoUserRepository();
-      
-      await repo.borrar(userId); 
-      
-      return res.status(200).json({ message: 'Usuario borrado correctamente' });
-    } catch (error) {
-      console.error("❌ Error al borrar usuario:", error);
-      return res.status(500).json({ error: 'Error al borrar el usuario' });
-    }
-  }
+    const hashedPassword = await this.authService.hashPassword(password);
+    const userEntity = new UserEntity(name, email, undefined, hashedPassword, rol || 'user', username);
+    const result = await this.createUserUseCase.execute(userEntity);
 
-  async login(req: Request, res: Response) {
-  try {
-    const { email, password } = req.body;
-    const repo = new MongoUserRepository();
-    const user = await repo.findByEmail(email);
-
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: 'Credenciales inválidas' });
-    }
-
-    return res.status(200).json({
-      id: user._id,
-      name: user.name,
-      rol: user.rol
+    return res.status(201).json({
+      message: 'Usuario creado exitosamente',
+      user: { id: result.id, name: result.nombre, email: result.email, rol: result.rol }
     });
-  } catch (error) {
-    return res.status(500).json({ error: 'Error en el login' });
-  }
-}
+  });
+
+  // Listar todos los usuarios
+  getAll = asyncHandler(async (_req: Request, res: Response) => {
+    const users = await this.listUsersUseCase.execute();
+    res.json({
+      message: 'Usuarios obtenidos exitosamente',
+      data: users.map(u => ({ id: u.id, nombre: u.nombre, email: u.email, rol: u.rol }))
+    });
+  });
+
+  // Obtener usuario con sus muestras
+  getUserAndMuestras = asyncHandler(async (req: Request, res: Response) => {
+    const userId = String(req.params.id);
+    const data = await this.obtenerUsuarioYMuestrasUseCase.execute(userId);
+    return res.status(200).json({ message: 'Usuario y muestras obtenidos', data });
+  });
+
+  // Crear registro de muestra
+  createRegistro = asyncHandler(async (req: Request, res: Response) => {
+    const registroData = req.body;
+    if (!registroData.usuario_id || !registroData.muestra) {
+      throw new AppError(400, 'usuario_id y muestra son requeridos');
     }
+    const result = await (this.registroRepository as any).crear(registroData);
+    return res.status(201).json({ message: 'Registro creado exitosamente', data: result });
+  });
+
+  // Eliminar usuario por ID (solo admin)
+  deleteUser = asyncHandler(async (req: Request, res: Response) => {
+    const userId = String(req.params.id);
+    if (!userId) throw new AppError(400, 'ID de usuario es requerido');
+    await this.userRepository.borrar(userId);
+    return res.status(200).json({ message: 'Usuario borrado correctamente' });
+  });
+
+  // Iniciar sesión
+  login = asyncHandler(async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    if (!email || !password) throw new AppError(400, 'Email y contraseña son requeridos');
+    const result = await this.loginUseCase.execute({ email, password });
+    return res.status(200).json({ message: 'Login exitoso', token: result.token, user: result.user });
+  });
+
+  // Actualizar perfil propio (username o contraseña)
+  updatePerfil = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthRequest;
+    const { id, email } = authReq.user!;
+    const { username, currentPassword, newPassword } = req.body;
+
+    // Cambio de contraseña: verificar la contraseña actual antes de actualizar
+    if (newPassword) {
+      if (!currentPassword) throw new AppError(400, 'La contraseña actual es requerida');
+      const user = await this.userRepository.findByEmail(email);
+      const isValid = await this.authService.comparePasswords(currentPassword, user.password || '');
+      if (!isValid) throw new AppError(401, 'Contraseña actual incorrecta');
+      const hashedPassword = await this.authService.hashPassword(newPassword);
+      await this.userRepository.updateById(id, { password: hashedPassword });
+    }
+
+    if (username !== undefined) {
+      await this.userRepository.updateById(id, { username });
+    }
+
+    return res.status(200).json({ message: 'Perfil actualizado correctamente' });
+  });
+
+  // Eliminar cuenta propia (solo usuarios normales, requiere contraseña)
+  eliminarCuenta = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthRequest;
+    const { id, email, rol } = authReq.user!;
+
+    if (rol === 'admin') {
+      throw new AppError(403, 'Los administradores no pueden eliminar su propia cuenta');
+    }
+
+    const { password } = req.body;
+    if (!password) throw new AppError(400, 'La contraseña es requerida para confirmar la eliminación');
+
+    const user = await this.userRepository.findByEmail(email);
+    const isValid = await this.authService.comparePasswords(password, user.password || '');
+    if (!isValid) throw new AppError(401, 'Contraseña incorrecta');
+
+    await this.userRepository.borrar(id);
+    return res.status(200).json({ message: 'Cuenta eliminada correctamente' });
+  });
+}

@@ -2,8 +2,17 @@
   <section class="row">
     <div class="col">
       <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
-        <mat-label>Nombre de Usuario</mat-label>
+        <mat-label>Nombre completo</mat-label>
         <input matInput placeholder="Ej: Laboratorio Central" type="text" [(ngModel)]="usuario.name">
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="row">
+    <div class="col">
+      <mat-form-field appearance="fill" class="mat-form-field-lg" style="width: 100%;">
+        <mat-label>Nombre de usuario (opcional)</mat-label>
+        <input matInput placeholder="Ej: lab_central" type="text" [(ngModel)]="usuario.username">
       </mat-form-field>
     </div>
   </section>

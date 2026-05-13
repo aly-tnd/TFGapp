@@ -29,6 +29,7 @@ import { GestionUsuariosService } from "../../../services/usuario.service";
 export class CrearUsuarioComponent {
   public usuario = {
     name: '',
+    username: '',
     email: '',
     password: '',
     rol: 'user',
@@ -53,6 +54,6 @@ export class CrearUsuarioComponent {
   }
 
   private limpiarFormulario() {
-    this.usuario = { name: '', email: '', password: '', rol: 'user', labData: {} };
+    this.usuario = { name: '', username: '', email: '', password: '', rol: 'user', labData: {} };
   }
 }

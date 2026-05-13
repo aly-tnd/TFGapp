@@ -1,7 +1,45 @@
-<div style="display: flex; height: 100vh;">
-  <app-menu></app-menu>
+<div class="app-layout">
 
-  <main style="flex: 1; padding: 20px; overflow-y: auto; background-color: #f5f5f5;">
-    <router-outlet></router-outlet>
-  </main>
+  <!-- Cabecera superior (solo cuando hay sesión iniciada) -->
+  <header *ngIf="estaLogado" class="top-header">
+    <div class="user-menu-container" (click)="$event.stopPropagation()">
+      <span class="username-label">{{ nombreVisible }}</span>
+      <button class="user-icon-btn" (click)="toggleDropdown()" aria-label="Menú de usuario">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+
+      <!-- Desplegable de opciones de usuario -->
+      <div *ngIf="mostrarDropdown" class="user-dropdown">
+        <button (click)="irAjustes()">
+          <mat-icon>manage_accounts</mat-icon>
+          Ajustes de cuenta
+        </button>
+        <button (click)="iniciarCerrarSesion()">
+          <mat-icon>logout</mat-icon>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal: menú lateral + vista de rutas -->
+  <div class="body-layout">
+    <app-menu *ngIf="estaLogado"></app-menu>
+    <main [class.main-content]="estaLogado" [class.main-full]="!estaLogado">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+</div>
+
+<!-- Modal de confirmación de cierre de sesión -->
+<div *ngIf="mostrarConfirmLogout" class="modal-overlay" (click)="cancelarLogout()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <h3>Cerrar sesión</h3>
+    <p>¿Estás seguro de que quieres cerrar sesión?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancelarLogout()">Cancelar</button>
+      <button class="btn-confirm" (click)="confirmarLogout()">Cerrar sesión</button>
+    </div>
+  </div>
 </div>

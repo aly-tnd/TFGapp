@@ -6,7 +6,9 @@
   </div>
 
   <mat-accordion>
-    <mat-expansion-panel [expanded]="true">
+
+    <!-- Sección exclusiva para administrador -->
+    <mat-expansion-panel *ngIf="esAdmin" [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>Administración</mat-panel-title>
         <mat-icon>settings</mat-icon>
@@ -20,14 +22,12 @@
               <mat-icon class="float-right">person</mat-icon>
             </a>
           </li>
-          
           <li routerLinkActive="active">
             <a routerLink="/listar-usuarios">
               Listado Usuarios
               <mat-icon class="float-right">groups</mat-icon>
             </a>
           </li>
-
           <li routerLinkActive="active">
             <a routerLink="/nuevo-espectrometro">
               Equipos y Sondas
@@ -38,7 +38,8 @@
       </section>
     </mat-expansion-panel>
 
-    <mat-expansion-panel>
+    <!-- Sección exclusiva para usuario normal -->
+    <mat-expansion-panel *ngIf="!esAdmin" [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>Muestras</mat-panel-title>
         <mat-icon>science</mat-icon>
@@ -55,5 +56,6 @@
         </ul>
       </section>
     </mat-expansion-panel>
+
   </mat-accordion>
 </div>

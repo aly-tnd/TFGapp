@@ -1,27 +1,43 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
-import { AuthService } from '../services/auth.service'; // Ajusta tu ruta
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
-// Guard para el Admin (Solo entra si es rol 'admin')
+// Guarda para rutas exclusivas de administrador
 export const adminGuard: CanActivateFn = () => {
-  const auth = inject(AuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
-  const user = auth.getUsuarioActual();
 
-  if (user?.rol === 'admin') return true;
-  
-  router.navigate(['/login']);
+  if (!authService.isAuthenticated()) {
+    router.navigate(['/login']);
+    return false;
+  }
+  if (authService.hasRole('admin')) return true;
+
+  router.navigate(['/nuevo-registro']);
   return false;
 };
 
-// Guard para Usuarios normales (Entra si está logeado, sea quien sea)
+// Guarda para rutas exclusivas de usuario normal
 export const userGuard: CanActivateFn = () => {
-  const auth = inject(AuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
-  const user = auth.getUsuarioActual();
 
-  if (user) return true; 
-  
+  if (!authService.isAuthenticated()) {
+    router.navigate(['/login']);
+    return false;
+  }
+  if (authService.hasRole('user')) return true;
+
+  router.navigate(['/listar-usuarios']);
+  return false;
+};
+
+// Guarda para rutas que requieren sesión iniciada (cualquier rol)
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated()) return true;
   router.navigate(['/login']);
   return false;
 };
