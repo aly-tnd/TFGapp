@@ -31,6 +31,7 @@ app.get('/api/usuarios/:id/muestras', authMiddleware, apiController.getUserAndMu
 app.delete('/api/usuarios/:id', authMiddleware, requireRole(['admin']), apiController.deleteUser);
 
 // ============= REGISTRO ROUTES (Protegidas) =============
+app.get('/api/registros',  authMiddleware, apiController.listarRegistros);
 app.post('/api/registros', authMiddleware, apiController.createRegistro);
 
 // ============= ESPECTROMETRO ROUTES (Protegidas) =============

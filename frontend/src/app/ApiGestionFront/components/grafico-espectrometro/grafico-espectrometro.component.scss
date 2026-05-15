@@ -1,0 +1,11 @@
+.grafico-contenedor {
+  margin-top: 28px;
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+
+  canvas {
+    max-height: 320px;
+  }
+}

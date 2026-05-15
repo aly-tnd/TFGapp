@@ -1,47 +1,36 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select'; // <-- Nuevo
-import { MatCheckboxModule } from '@angular/material/checkbox'; // <-- Nuevo
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import { OnInit } from '@angular/core'; // <-- Añade OnInit
 import { GestionUsuariosService } from '../../../services/usuario.service';
 import { RegistroService } from '../../../services/registro.service';
+import { EspectrometroService } from '../../../services/espectrometro.service';
+import { GraficoEspectrometroComponent } from '../grafico-espectrometro/grafico-espectrometro.component';
 
 @Component({
   selector: 'app-crear-registro',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatFormFieldModule, 
-    MatInputModule, MatSelectModule, MatCheckboxModule, MatButtonModule
+    CommonModule, FormsModule, MatFormFieldModule,
+    MatInputModule, MatSelectModule, MatCheckboxModule, MatButtonModule,
+    GraficoEspectrometroComponent
   ],
   templateUrl: './crear-registro.component.html',
   styleUrls: ['./crear-registro.component.scss']
 })
-export class CrearRegistroComponent {
-  
+export class CrearRegistroComponent implements OnInit {
 
-  public mapaEspectrometros: { [key: string]: string[] } = {
-    'Espectrometro Bruker Avance NEO': [
-      'PI HR BB400 (5mm)', 'PA BBI400 S1 (5mm)', 'PA BBI400 DIFF (5mm)'
-    ],
-    'Espectrometro Bruker Avance III / 500 (Muestras Líquidas)': [
-      'PABBI (5mm)', 'PASEX (10mm)'
-    ],
-    'Espectrometro Bruker Avance NEO / HD (Muestras Sólidas)': [
-      'SPRB400172_7164 (7.5 mm)', 'SPRB400172_7423 (7.5 mm)', 
-      'H8906-20_007 (Triple resonancia)', 'H13664_0016 (2.5 mm)', 
-      'H12138_0076 (Doble Resonancia)', 'H13349_0014 (Baja Frecuencia)'
-    ]
-  };
-
-  public listaEspectrometros = Object.keys(this.mapaEspectrometros);
+  public espectrometros: { id: string; nombre: string; sondas: string[] }[] = [];
   public sondasDisponibles: string[] = [];
+  public espectrometroSeleccionado: { id: string; nombre: string; sondas: string[] } | null = null;
 
   public registro = {
     espectrometro: '',
+    espectrometro_id: '',
     sonda: '',
     fechaEntrada: '',
     usuario: '',
@@ -55,7 +44,8 @@ export class CrearRegistroComponent {
 
   constructor(
     private usuarioService: GestionUsuariosService,
-    private registroService: RegistroService
+    private registroService: RegistroService,
+    private espectrometroService: EspectrometroService
   ) {}
 
   ngOnInit() {
@@ -63,29 +53,34 @@ export class CrearRegistroComponent {
       next: (users) => this.listaUsuarios = users,
       error: (err) => console.error('Error cargando usuarios', err)
     });
+
+    this.espectrometroService.listar().subscribe({
+      next: (data) => this.espectrometros = data,
+      error: (err) => console.error('Error cargando espectrometros', err)
+    });
   }
 
   actualizarSondas() {
-    this.sondasDisponibles = this.mapaEspectrometros[this.registro.espectrometro] || [];
-    this.registro.sonda = ''; 
+    const esp = this.espectrometros.find(e => e.id === this.registro.espectrometro_id);
+    this.espectrometroSeleccionado = esp ?? null;
+    this.sondasDisponibles = esp?.sondas ?? [];
+    this.registro.espectrometro = esp?.nombre ?? '';
+    this.registro.sonda = '';
   }
 
   guardarMuestra() {
     const payload = {
-      espectrometro: this.registro.espectrometro,
-      sonda: this.registro.sonda,
-      usuario_id: this.registro.usuario,        // Traducimos usuario -> usuario_id
-      fecha_entrada: this.registro.fechaEntrada,// Traducimos fechaEntrada -> fecha_entrada
-      muestra: this.registro.nombreMuestra,     // Traducimos nombreMuestra -> muestra
-      completo: this.registro.finalizado        // Traducimos finalizado -> completo
+      espectrometro:    this.registro.espectrometro,
+      espectrometro_id: this.registro.espectrometro_id || undefined,
+      sonda:            this.registro.sonda,
+      usuario_id:       this.registro.usuario,
+      fecha_entrada:    this.registro.fechaEntrada,
+      muestra:          this.registro.nombreMuestra,
+      completo:         this.registro.finalizado
     };
 
-    console.log('Enviando al backend...', payload);
-    
     this.registroService.crear(payload).subscribe({
-      next: (res: any) => {
-        alert('Muestra guardada con éxito');
-      },
+      next: () => alert('Muestra guardada con éxito'),
       error: (err: any) => {
         console.error('Error al guardar:', err);
         alert('Error al guardar la muestra');

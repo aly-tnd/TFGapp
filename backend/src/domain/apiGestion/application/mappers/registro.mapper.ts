@@ -2,7 +2,6 @@ import { Types } from 'mongoose';
 import { IRegistro } from '../../infrastructure/db/registro.schema';
 import { RegistroEntity } from '../../domain/entities/registro.entity';
 
-
 export interface RegistroRaw extends IRegistro {
   _id: Types.ObjectId;
 }
@@ -16,7 +15,8 @@ export class RegistroMapper {
       registroDb.usuario_id,
       registroDb.fecha_entrada,
       registroDb.muestra,
-      registroDb.completo
+      registroDb.completo,
+      registroDb.espectrometro_id?.toString()
     );
   }
 }

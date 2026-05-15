@@ -55,13 +55,19 @@ export class ApiController {
     return res.status(200).json({ message: 'Usuario y muestras obtenidos', data });
   });
 
+  // Listar todos los registros
+  listarRegistros = asyncHandler(async (_req: Request, res: Response) => {
+    const registros = await this.registroRepository.findAll();
+    return res.status(200).json({ message: 'Registros obtenidos', data: registros });
+  });
+
   // Crear registro de muestra
   createRegistro = asyncHandler(async (req: Request, res: Response) => {
     const registroData = req.body;
     if (!registroData.usuario_id || !registroData.muestra) {
       throw new AppError(400, 'usuario_id y muestra son requeridos');
     }
-    const result = await (this.registroRepository as any).crear(registroData);
+    const result = await this.registroRepository.crear(registroData);
     return res.status(201).json({ message: 'Registro creado exitosamente', data: result });
   });
 

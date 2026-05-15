@@ -3,14 +3,14 @@
 
   <mat-form-field appearance="fill" class="campo-completo">
     <mat-label>Espectrómetro</mat-label>
-    <mat-select [(ngModel)]="registro.espectrometro" (selectionChange)="actualizarSondas()">
-      <mat-option *ngFor="let esp of listaEspectrometros" [value]="esp">{{ esp }}</mat-option>
+    <mat-select [(ngModel)]="registro.espectrometro_id" (selectionChange)="actualizarSondas()">
+      <mat-option *ngFor="let esp of espectrometros" [value]="esp.id">{{ esp.nombre }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="campo-completo">
-    <mat-label>Sondas</mat-label>
-    <mat-select [(ngModel)]="registro.sonda" [disabled]="!registro.espectrometro">
+    <mat-label>Sonda</mat-label>
+    <mat-select [(ngModel)]="registro.sonda" [disabled]="!registro.espectrometro_id">
       <mat-option *ngFor="let sonda of sondasDisponibles" [value]="sonda">{{ sonda }}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -20,14 +20,14 @@
     <input matInput type="date" [(ngModel)]="registro.fechaEntrada">
   </mat-form-field>
 
-  <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 15px;">
-  <mat-label>Usuario</mat-label>
-  <mat-select [(ngModel)]="registro.usuario" name="usuario">
-    <mat-option *ngFor="let u of listaUsuarios" [value]="u.id || u._id">
-      {{ u.nombre }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+  <mat-form-field appearance="fill" class="campo-completo">
+    <mat-label>Usuario</mat-label>
+    <mat-select [(ngModel)]="registro.usuario">
+      <mat-option *ngFor="let u of listaUsuarios" [value]="u.id || u._id">
+        {{ u.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <mat-form-field appearance="fill" class="campo-completo">
     <mat-label>Nombre de la muestra</mat-label>
@@ -47,4 +47,11 @@
   <button mat-raised-button color="primary" class="boton-guardar" (click)="guardarMuestra()">
     Guardar Muestra
   </button>
+
+  <app-grafico-espectrometro
+    *ngIf="espectrometroSeleccionado"
+    [espectrometroId]="espectrometroSeleccionado.id"
+    [nombreEspectrometro]="espectrometroSeleccionado.nombre"
+    [sondas]="espectrometroSeleccionado.sondas">
+  </app-grafico-espectrometro>
 </div>
