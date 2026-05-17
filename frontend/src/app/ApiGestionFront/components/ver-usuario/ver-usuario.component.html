@@ -1,39 +1,129 @@
-<div class="ver-usuario-container" *ngIf="usuario">
-  
-  <div class="header-actions">
-    <button mat-button color="primary" routerLink="/listar-usuarios">
-      <mat-icon>arrow_back</mat-icon> Volver al listado
-    </button>
-  </div>
+<div class="registros-page" *ngIf="usuario; else cargando">
 
-  <mat-card class="usuario-card">
-    <mat-card-header>
-      <div mat-card-avatar class="avatar-placeholder">
-        <mat-icon>person</mat-icon>
+  <!-- Cabecera con info del usuario -->
+  <div class="page-header">
+    <div class="usuario-info">
+      <button class="btn-volver" routerLink="/listar-usuarios">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2>{{ usuario.nombre }}</h2>
+        <span class="usuario-email">{{ usuario.email }}</span>
       </div>
-      <mat-card-title>Técnico: {{ usuario.nombre }}</mat-card-title>
-      <mat-card-subtitle>{{ usuario.email }}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-
-  <div class="tabla-container">
-    <div class="tabla-cabecera">
-      <h3>Muestras Asignadas ({{ muestras.length }})</h3>
-      <button mat-raised-button color="accent" (click)="exportarMuestras()" [disabled]="!muestras.length">
+    </div>
+    <div class="header-actions">
+      <button class="btn-export" (click)="exportarMuestras()" [disabled]="!muestras.length">
         Exportar CSV
       </button>
+      <button class="btn-lupa" (click)="filtroVisible = !filtroVisible"
+              [class.activo]="filtroVisible" title="Filtrar registros">
+        <mat-icon>search</mat-icon>
+      </button>
     </div>
-    <ag-grid-angular
-      class="ag-theme-alpine grid-muestras"
-      [rowData]="muestras"
-      [columnDefs]="columnDefs"
-      [pagination]="true"
-      [paginationPageSize]="10">
-    </ag-grid-angular>
   </div>
 
+  <!-- Panel de filtros -->
+  <div class="panel-filtros" *ngIf="filtroVisible">
+    <div class="filtros-grid">
+      <div class="filtro-campo">
+        <label>Muestra</label>
+        <input type="text" [(ngModel)]="filtros.muestra"
+               (ngModelChange)="aplicarFiltro()" placeholder="Buscar por nombre..." />
+      </div>
+      <div class="filtro-campo">
+        <label>Espectrometro</label>
+        <select [(ngModel)]="filtros.espectrometro" (ngModelChange)="aplicarFiltro()">
+          <option value="">Todos</option>
+          <option *ngFor="let e of espectrometrosDisponibles" [value]="e">{{ e }}</option>
+        </select>
+      </div>
+      <div class="filtro-campo">
+        <label>Sonda</label>
+        <select [(ngModel)]="filtros.sonda" (ngModelChange)="aplicarFiltro()">
+          <option value="">Todas</option>
+          <option *ngFor="let s of sondasDisponibles" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+      <div class="filtro-campo">
+        <label>Estado</label>
+        <select [(ngModel)]="filtros.estado" (ngModelChange)="aplicarFiltro()">
+          <option value="">Todos</option>
+          <option value="true">Completado</option>
+          <option value="false">Pendiente</option>
+        </select>
+      </div>
+      <div class="filtro-campo">
+        <label>Fecha desde</label>
+        <input type="date" [(ngModel)]="filtros.fechaDesde" (ngModelChange)="aplicarFiltro()" />
+      </div>
+      <div class="filtro-campo">
+        <label>Fecha hasta</label>
+        <input type="date" [(ngModel)]="filtros.fechaHasta" (ngModelChange)="aplicarFiltro()" />
+      </div>
+    </div>
+    <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
+
+  <!-- Tabla -->
+  <ng-container *ngIf="muestras.length > 0; else sinRegistros">
+    <div class="tabla-scroll">
+      <table class="tabla-registros">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Muestra</th>
+            <th>Espectrometro</th>
+            <th>Sonda</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of muestrasPagina">
+            <td>{{ formatFecha(m.fecha_entrada) }}</td>
+            <td>{{ m.muestra }}</td>
+            <td>{{ m.espectrometro }}</td>
+            <td>{{ m.sonda }}</td>
+            <td [class.completado]="m.completo" [class.pendiente]="!m.completo">
+              {{ m.completo ? 'Completado' : 'Pendiente' }}
+            </td>
+          </tr>
+          <tr *ngIf="muestrasFiltradas.length === 0">
+            <td colspan="5" class="sin-coincidencias">
+              No hay registros que coincidan con los filtros aplicados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion">
+      <div class="paginacion-info">
+        Mostrando {{ rangoInicio }} – {{ rangoFin }} de {{ muestrasFiltradas.length }} registros
+      </div>
+      <div class="paginacion-controles">
+        <button class="btn-pag" (click)="cambiarPagina(1)" [disabled]="pagina === 1">«</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">‹</button>
+        <button *ngFor="let p of paginasVisibles" class="btn-pag"
+                [class.activo]="p === pagina" (click)="cambiarPagina(p)">{{ p }}</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina === totalPaginas">›</button>
+        <button class="btn-pag" (click)="cambiarPagina(totalPaginas)" [disabled]="pagina === totalPaginas">»</button>
+      </div>
+      <div class="paginacion-tamano">
+        <label>Por pagina:</label>
+        <select [(ngModel)]="tamanoPagina" (ngModelChange)="cambiarTamano($event)">
+          <option *ngFor="let t of tamanosPagina" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #sinRegistros>
+    <p class="sin-datos">Este usuario no tiene registros aun.</p>
+  </ng-template>
+
 </div>
 
-<div *ngIf="!usuario" class="loading">
-  <p>Cargando información...</p>
-</div>
+<ng-template #cargando>
+  <p class="cargando">Cargando informacion del usuario...</p>
+</ng-template>

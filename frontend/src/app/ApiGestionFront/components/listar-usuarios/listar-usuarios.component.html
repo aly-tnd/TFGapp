@@ -1,24 +1,90 @@
-<ag-grid-angular
-        style="width: 100%; height: 500px;"
-        class="ag-theme-alpine"
-        [rowData]="usuarios"
-        [columnDefs]="columnDefs"
-        [pagination]="true"
-        rowSelection="multiple" 
-        (gridReady)="onGridReady($event)">
-      </ag-grid-angular>
+<div class="registros-page">
 
-  <section style="margin-top: 15px; display: flex; gap: 10px;">
-  <button mat-raised-button color="primary" routerLink="/nuevo-usuario">
-    <mat-icon>add</mat-icon> Nuevo Usuario
-  </button>
-  
-  <button mat-raised-button color="warn" (click)="borrarUsuarios()">
-    <mat-icon>delete</mat-icon> Borrar Usuario
-  </button>
+  <!-- Cabecera -->
+  <div class="page-header">
+    <h2>Listado de Usuarios</h2>
+    <div class="header-actions">
+      <a class="btn-nuevo" routerLink="/nuevo-usuario">Nuevo Usuario</a>
+      <button class="btn-export" (click)="exportarUsuarios()" [disabled]="!usuariosFiltrados.length">
+        Exportar CSV
+      </button>
+      <button class="btn-lupa" (click)="filtroVisible = !filtroVisible"
+              [class.activo]="filtroVisible" title="Filtrar usuarios">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+  </div>
 
-  <app-exportar-csv 
-    [datos]="datosExportar" 
-    nombreArchivo="usuarios_y_espectrometros.csv">
-  </app-exportar-csv>
-</section>
+  <!-- Panel de filtros -->
+  <div class="panel-filtros" *ngIf="filtroVisible">
+    <div class="filtros-grid">
+      <div class="filtro-campo">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="filtros.nombre"
+               (ngModelChange)="aplicarFiltro()" placeholder="Buscar por nombre..." />
+      </div>
+      <div class="filtro-campo">
+        <label>Correo electronico</label>
+        <input type="text" [(ngModel)]="filtros.email"
+               (ngModelChange)="aplicarFiltro()" placeholder="Buscar por email..." />
+      </div>
+    </div>
+    <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
+
+  <!-- Tabla -->
+  <ng-container *ngIf="usuarios.length > 0; else sinUsuarios">
+    <div class="tabla-scroll">
+      <table class="tabla-registros">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo electronico</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of usuariosPagina">
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.email }}</td>
+            <td class="td-acciones">
+              <a class="btn-ver" [routerLink]="['/usuario', u.id || u._id]">Ver registros</a>
+              <button class="btn-eliminar" (click)="borrarUsuario(u)">Eliminar</button>
+            </td>
+          </tr>
+          <tr *ngIf="usuariosFiltrados.length === 0">
+            <td colspan="3" class="sin-coincidencias">
+              No hay usuarios que coincidan con los filtros aplicados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion">
+      <div class="paginacion-info">
+        Mostrando {{ rangoInicio }} – {{ rangoFin }} de {{ usuariosFiltrados.length }} usuarios
+      </div>
+      <div class="paginacion-controles">
+        <button class="btn-pag" (click)="cambiarPagina(1)" [disabled]="pagina === 1">«</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">‹</button>
+        <button *ngFor="let p of paginasVisibles" class="btn-pag"
+                [class.activo]="p === pagina" (click)="cambiarPagina(p)">{{ p }}</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina === totalPaginas">›</button>
+        <button class="btn-pag" (click)="cambiarPagina(totalPaginas)" [disabled]="pagina === totalPaginas">»</button>
+      </div>
+      <div class="paginacion-tamano">
+        <label>Por pagina:</label>
+        <select [(ngModel)]="tamanoPagina" (ngModelChange)="cambiarTamano($event)">
+          <option *ngFor="let t of tamanosPagina" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #sinUsuarios>
+    <p class="sin-datos">No hay usuarios registrados aun.</p>
+  </ng-template>
+
+</div>
