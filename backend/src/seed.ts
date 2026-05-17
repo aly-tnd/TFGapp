@@ -3,8 +3,7 @@ import bcrypt from 'bcryptjs';
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mi_proyecto_db';
 
-// ── Schemas mínimos para el seed (sin importar toda la app) ──────────────────
-
+// Schemas minimos para el seed, independientes del resto de la aplicacion
 const UserSchema = new mongoose.Schema({
   username: { type: String },
   name:     { type: String },
@@ -21,11 +20,10 @@ const EspectrometroSchema = new mongoose.Schema({
 const UserModel          = mongoose.model('User', UserSchema);
 const EspectrometroModel = mongoose.model('Espectrometro', EspectrometroSchema);
 
-// ── Datos de espectrometros a insertar ───────────────────────────────────────
-
+// Espectrometros y sondas del laboratorio
 const ESPECTROMETROS = [
   {
-    nombre: 'Bruker Avance NEO 400 (Muestras Líquidas)',
+    nombre: 'Bruker Avance NEO 400 (Muestras Liquidas)',
     sondas: [
       'PI HR BB400 (5mm)',
       'PA BBI400 S1 (5mm)',
@@ -33,14 +31,14 @@ const ESPECTROMETROS = [
     ]
   },
   {
-    nombre: 'Bruker Avance III 500 (Muestras Líquidas)',
+    nombre: 'Bruker Avance III 500 (Muestras Liquidas)',
     sondas: [
       'PABBI (5mm)',
       'PASEX (10mm)'
     ]
   },
   {
-    nombre: 'Bruker Avance NEO HD 400 (Muestras Sólidas)',
+    nombre: 'Bruker Avance NEO HD 400 (Muestras Solidas)',
     sondas: [
       'SPRB400172_7164 (7.5 mm)',
       'SPRB400172_7423 (7.5 mm)',
@@ -52,31 +50,30 @@ const ESPECTROMETROS = [
   }
 ];
 
-// ── Seed ─────────────────────────────────────────────────────────────────────
-
 async function seedUsuarios() {
   const users = await UserModel.find();
 
   if (users.length === 0) {
-    console.log('⚠️  No hay usuarios. Créalos con POST /api/usuarios.');
+    console.log('Sin usuarios. Creelos con POST /api/usuarios.');
     return;
   }
 
   for (const user of users) {
-    const pwd = (user as any).password as string | undefined;
+    const pwd      = (user as any).password as string | undefined;
     const isBcrypt = pwd?.startsWith('$2b$') || pwd?.startsWith('$2a$');
+
     if (!isBcrypt && pwd) {
       const hashed = await bcrypt.hash(pwd, 10);
       await UserModel.updateOne({ _id: user._id }, { $set: { password: hashed } });
-      console.log(`  ✅ Contraseña hasheada: ${(user as any).email}`);
+      console.log(`  Contrasena hasheada: ${(user as any).email}`);
     } else {
-      console.log(`  ℹ️  Hash OK: ${(user as any).email}`);
+      console.log(`  Hash OK: ${(user as any).email}`);
     }
   }
 }
 
 async function seedEspectrometros() {
-  let creados = 0;
+  let creados   = 0;
   let existentes = 0;
 
   for (const esp of ESPECTROMETROS) {
@@ -86,32 +83,32 @@ async function seedEspectrometros() {
       { upsert: true }
     );
     if (resultado.upsertedCount > 0) {
-      console.log(`  ✅ Creado: ${esp.nombre} (${esp.sondas.length} sondas)`);
+      console.log(`  Creado: ${esp.nombre} (${esp.sondas.length} sondas)`);
       creados++;
     } else {
-      console.log(`  ℹ️  Ya existe: ${esp.nombre}`);
+      console.log(`  Ya existe: ${esp.nombre}`);
       existentes++;
     }
   }
 
-  console.log(`  → ${creados} creados, ${existentes} ya existían`);
+  console.log(`  ${creados} creados, ${existentes} ya existian`);
 }
 
 async function seed() {
   await mongoose.connect(MONGO_URI);
-  console.log('✅ Conectado a MongoDB\n');
+  console.log('Conectado a MongoDB\n');
 
-  console.log('── Usuarios ─────────────────────────────');
+  console.log('--- Usuarios ---');
   await seedUsuarios();
 
-  console.log('\n── Espectrometros ───────────────────────');
+  console.log('\n--- Espectrometros ---');
   await seedEspectrometros();
 
   await mongoose.disconnect();
-  console.log('\n✅ Seed completado.');
+  console.log('\nSeed completado.');
 }
 
 seed().catch(err => {
-  console.error('❌ Error en seed:', err.message);
+  console.error('Error en seed:', err.message);
   process.exit(1);
 });

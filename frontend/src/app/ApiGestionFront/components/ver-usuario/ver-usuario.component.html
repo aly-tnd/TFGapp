@@ -17,7 +17,12 @@
   </mat-card>
 
   <div class="tabla-container">
-    <h3>Muestras Asignadas ({{ muestras.length }})</h3>
+    <div class="tabla-cabecera">
+      <h3>Muestras Asignadas ({{ muestras.length }})</h3>
+      <button mat-raised-button color="accent" (click)="exportarMuestras()" [disabled]="!muestras.length">
+        Exportar CSV
+      </button>
+    </div>
     <ag-grid-angular
       class="ag-theme-alpine grid-muestras"
       [rowData]="muestras"

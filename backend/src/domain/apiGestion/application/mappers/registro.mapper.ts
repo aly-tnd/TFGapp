@@ -7,16 +7,17 @@ export interface RegistroRaw extends IRegistro {
 }
 
 export class RegistroMapper {
-  static toEntity(registroDb: RegistroRaw): RegistroEntity {
+  static toEntity(doc: RegistroRaw): RegistroEntity {
     return new RegistroEntity(
-      registroDb._id.toString(),
-      registroDb.espectrometro,
-      registroDb.sonda,
-      registroDb.usuario_id,
-      registroDb.fecha_entrada,
-      registroDb.muestra,
-      registroDb.completo,
-      registroDb.espectrometro_id?.toString()
+      doc._id.toString(),
+      doc.espectrometro,
+      doc.sonda,
+      doc.usuario_id,
+      doc.fecha_entrada,
+      doc.muestra,
+      doc.completo,
+      doc.espectrometro_id?.toString(),
+      doc.solicitud_id
     );
   }
 }

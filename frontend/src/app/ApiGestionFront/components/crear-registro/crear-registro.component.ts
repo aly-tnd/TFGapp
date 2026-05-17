@@ -6,17 +6,23 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import { GestionUsuariosService } from '../../../services/usuario.service';
+import { AuthService } from '../../../services/auth.service';
 import { RegistroService } from '../../../services/registro.service';
 import { EspectrometroService } from '../../../services/espectrometro.service';
 import { GraficoEspectrometroComponent } from '../grafico-espectrometro/grafico-espectrometro.component';
+
+/** Devuelve la fecha actual en formato YYYY-MM-DD con zona horaria de Madrid */
+function fechaMadridHoy(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date());
+}
 
 @Component({
   selector: 'app-crear-registro',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatCheckboxModule, MatButtonModule,
+    CommonModule, FormsModule,
+    MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatCheckboxModule, MatButtonModule,
     GraficoEspectrometroComponent
   ],
   templateUrl: './crear-registro.component.html',
@@ -28,35 +34,38 @@ export class CrearRegistroComponent implements OnInit {
   public sondasDisponibles: string[] = [];
   public espectrometroSeleccionado: { id: string; nombre: string; sondas: string[] } | null = null;
 
+  /** Registros del usuario cargados al inicio; se pasan al grafico y a la tabla */
+  public misRegistros: any[] = [];
+
   public registro = {
-    espectrometro: '',
+    espectrometro:    '',
     espectrometro_id: '',
-    sonda: '',
-    fechaEntrada: '',
-    usuario: '',
-    nombreMuestra: '',
-    idSolicitud: '',
-    finalizado: false,
+    sonda:            '',
+    fechaEntrada:     fechaMadridHoy(),
+    nombreMuestra:    '',
+    finalizado:       false,
     recuperarMuestra: false
   };
 
-  public listaUsuarios: any[] = [];
-
   constructor(
-    private usuarioService: GestionUsuariosService,
+    private authService: AuthService,
     private registroService: RegistroService,
     private espectrometroService: EspectrometroService
   ) {}
 
   ngOnInit() {
-    this.usuarioService.listar().subscribe({
-      next: (users) => this.listaUsuarios = users,
-      error: (err) => console.error('Error cargando usuarios', err)
-    });
-
     this.espectrometroService.listar().subscribe({
       next: (data) => this.espectrometros = data,
-      error: (err) => console.error('Error cargando espectrometros', err)
+      error: (err) => console.error('Error cargando espectrometros:', err)
+    });
+
+    this.cargarMisRegistros();
+  }
+
+  cargarMisRegistros() {
+    this.registroService.getMisRegistros().subscribe({
+      next: (data) => this.misRegistros = data,
+      error: (err) => console.error('Error cargando registros:', err)
     });
   }
 
@@ -69,18 +78,29 @@ export class CrearRegistroComponent implements OnInit {
   }
 
   guardarMuestra() {
+    const usuarioActual = this.authService.getUsuarioActual();
+    if (!usuarioActual) return;
+
     const payload = {
       espectrometro:    this.registro.espectrometro,
       espectrometro_id: this.registro.espectrometro_id || undefined,
       sonda:            this.registro.sonda,
-      usuario_id:       this.registro.usuario,
+      usuario_id:       usuarioActual.id,
       fecha_entrada:    this.registro.fechaEntrada,
       muestra:          this.registro.nombreMuestra,
       completo:         this.registro.finalizado
     };
 
     this.registroService.crear(payload).subscribe({
-      next: () => alert('Muestra guardada con éxito'),
+      next: () => {
+        alert('Muestra guardada correctamente');
+        this.registro.nombreMuestra = '';
+        this.registro.sonda = '';
+        this.registro.finalizado = false;
+        this.registro.recuperarMuestra = false;
+        this.registro.fechaEntrada = fechaMadridHoy();
+        this.cargarMisRegistros();
+      },
       error: (err: any) => {
         console.error('Error al guardar:', err);
         alert('Error al guardar la muestra');

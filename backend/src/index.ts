@@ -12,33 +12,36 @@ app.use(express.json());
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mi_proyecto_db';
 mongoose.connect(MONGO_URI)
-  .then(() => console.log('✅ Conectado a MongoDB'))
-  .catch((error) => console.error('❌ Error MongoDB:', error));
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch((err) => console.error('Error de conexion MongoDB:', err));
 
 app.get('/', (_req: Request, res: Response) => res.json({ message: 'Backend operativo' }));
 
-// ============= AUTH ROUTES (Públicas) =============
-app.post('/api/login', apiController.login);
+// Rutas publicas
+app.post('/api/login',    apiController.login);
 app.post('/api/usuarios', apiController.create);
 
-// ============= PERFIL (Usuario autenticado, cualquier rol) =============
-app.patch('/api/perfil', authMiddleware, apiController.updatePerfil);
+// Perfil del usuario autenticado
+app.patch('/api/perfil',  authMiddleware, apiController.updatePerfil);
 app.delete('/api/perfil', authMiddleware, apiController.eliminarCuenta);
 
-// ============= USUARIO ROUTES (Protegidas) =============
-app.get('/api/usuarios', authMiddleware, apiController.getAll);
-app.get('/api/usuarios/:id/muestras', authMiddleware, apiController.getUserAndMuestras);
-app.delete('/api/usuarios/:id', authMiddleware, requireRole(['admin']), apiController.deleteUser);
+// Registros del usuario autenticado
+app.get('/api/mis-registros', authMiddleware, apiController.getMisRegistros);
 
-// ============= REGISTRO ROUTES (Protegidas) =============
-app.get('/api/registros',  authMiddleware, apiController.listarRegistros);
+// Usuarios (lectura requiere autenticacion)
+app.get('/api/usuarios',                  authMiddleware, apiController.getAll);
+app.get('/api/usuarios/:id/muestras',     authMiddleware, apiController.getUserAndMuestras);
+app.delete('/api/usuarios/:id',           authMiddleware, requireRole(['admin']), apiController.deleteUser);
+
+// Registros
+app.get('/api/registros',  authMiddleware, requireRole(['admin']), apiController.listarRegistros);
 app.post('/api/registros', authMiddleware, apiController.createRegistro);
 
-// ============= ESPECTROMETRO ROUTES (Protegidas) =============
+// Espectrometros
 app.post('/api/espectrometros', authMiddleware, espectrometroController.crear);
-app.get('/api/espectrometros', authMiddleware, espectrometroController.listar);
+app.get('/api/espectrometros',  authMiddleware, espectrometroController.listar);
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Servidor en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor iniciado en puerto ${PORT}`));

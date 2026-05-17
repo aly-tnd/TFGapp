@@ -55,7 +55,14 @@ export class ApiController {
     return res.status(200).json({ message: 'Usuario y muestras obtenidos', data });
   });
 
-  // Listar todos los registros
+  // Registros del usuario autenticado
+  getMisRegistros = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = (req as AuthRequest).user!;
+    const registros = await this.registroRepository.findByUserId(id);
+    return res.status(200).json({ message: 'Registros del usuario', data: registros });
+  });
+
+  // Todos los registros (admin)
   listarRegistros = asyncHandler(async (_req: Request, res: Response) => {
     const registros = await this.registroRepository.findAll();
     return res.status(200).json({ message: 'Registros obtenidos', data: registros });

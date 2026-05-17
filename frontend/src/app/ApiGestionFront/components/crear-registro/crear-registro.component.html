@@ -2,7 +2,7 @@
   <h2>Crear Muestra</h2>
 
   <mat-form-field appearance="fill" class="campo-completo">
-    <mat-label>Espectrómetro</mat-label>
+    <mat-label>Espectrometro</mat-label>
     <mat-select [(ngModel)]="registro.espectrometro_id" (selectionChange)="actualizarSondas()">
       <mat-option *ngFor="let esp of espectrometros" [value]="esp.id">{{ esp.nombre }}</mat-option>
     </mat-select>
@@ -15,18 +15,10 @@
     </mat-select>
   </mat-form-field>
 
+  <!-- Fecha actual (zona horaria Madrid): solo lectura -->
   <mat-form-field appearance="fill" class="campo-completo">
-    <mat-label>Fecha Entrada</mat-label>
-    <input matInput type="date" [(ngModel)]="registro.fechaEntrada">
-  </mat-form-field>
-
-  <mat-form-field appearance="fill" class="campo-completo">
-    <mat-label>Usuario</mat-label>
-    <mat-select [(ngModel)]="registro.usuario">
-      <mat-option *ngFor="let u of listaUsuarios" [value]="u.id || u._id">
-        {{ u.nombre }}
-      </mat-option>
-    </mat-select>
+    <mat-label>Fecha de entrada</mat-label>
+    <input matInput type="date" [(ngModel)]="registro.fechaEntrada" [readonly]="true">
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="campo-completo">
@@ -34,24 +26,22 @@
     <input matInput type="text" [(ngModel)]="registro.nombreMuestra">
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="campo-completo">
-    <mat-label>Id Solicitud</mat-label>
-    <input matInput type="text" [(ngModel)]="registro.idSolicitud">
-  </mat-form-field>
-
   <div class="opciones-checkbox">
-    <mat-checkbox [(ngModel)]="registro.finalizado" color="primary">Finalizado</mat-checkbox>
-    <mat-checkbox [(ngModel)]="registro.recuperarMuestra" color="primary">Recuperar Muestra</mat-checkbox>
+    <mat-checkbox [(ngModel)]="registro.finalizado"      color="primary">Finalizado</mat-checkbox>
+    <mat-checkbox [(ngModel)]="registro.recuperarMuestra" color="primary">Recuperar muestra</mat-checkbox>
   </div>
 
   <button mat-raised-button color="primary" class="boton-guardar" (click)="guardarMuestra()">
-    Guardar Muestra
+    Guardar muestra
   </button>
 
+  <!-- Grafico de uso de sondas para el espectrometro seleccionado -->
   <app-grafico-espectrometro
     *ngIf="espectrometroSeleccionado"
     [espectrometroId]="espectrometroSeleccionado.id"
     [nombreEspectrometro]="espectrometroSeleccionado.nombre"
-    [sondas]="espectrometroSeleccionado.sondas">
+    [sondas]="espectrometroSeleccionado.sondas"
+    [registros]="misRegistros">
   </app-grafico-espectrometro>
+
 </div>

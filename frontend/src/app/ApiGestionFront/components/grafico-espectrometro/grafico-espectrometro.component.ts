@@ -7,7 +7,6 @@ import {
   Chart, BarController, BarElement,
   CategoryScale, LinearScale, Tooltip, Legend, Title
 } from 'chart.js';
-import { RegistroService } from '../../../services/registro.service';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
 
@@ -22,38 +21,27 @@ export class GraficoEspectrometroComponent implements OnChanges, AfterViewInit, 
   @Input() espectrometroId!: string;
   @Input() nombreEspectrometro!: string;
   @Input() sondas: string[] = [];
+  /** Registros del usuario; proporcionados por el componente padre */
+  @Input() registros: any[] = [];
 
   @ViewChild('chartCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private chart: Chart | null = null;
-  private registros: any[] = [];
   private canvasListo = false;
-
-  constructor(private registroService: RegistroService) {}
 
   ngAfterViewInit() {
     this.canvasListo = true;
-    this.cargarYDibujar();
+    this.renderChart();
   }
 
   ngOnChanges(_changes: SimpleChanges) {
     if (this.canvasListo) {
-      this.cargarYDibujar();
+      this.renderChart();
     }
   }
 
   ngOnDestroy() {
     this.chart?.destroy();
-  }
-
-  private cargarYDibujar() {
-    this.registroService.listar().subscribe({
-      next: (data) => {
-        this.registros = data;
-        this.renderChart();
-      },
-      error: () => this.renderChart()  // dibuja con 0s si falla la carga
-    });
   }
 
   private renderChart() {

@@ -1,0 +1,124 @@
+<div class="mis-registros-page">
+
+  <!-- Cabecera de la página -->
+  <div class="page-header">
+    <h2>Mis Registros</h2>
+    <div class="header-actions">
+      <button class="btn-export" (click)="exportarTodo()" [disabled]="!registros.length">
+        Exportar CSV
+      </button>
+      <button class="btn-lupa" (click)="filtroVisible = !filtroVisible"
+              [class.activo]="filtroVisible" title="Filtrar registros">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Panel de filtros (se muestra al pulsar la lupa) -->
+  <div class="panel-filtros" *ngIf="filtroVisible">
+    <div class="filtros-grid">
+      <div class="filtro-campo">
+        <label>Muestra</label>
+        <input type="text" [(ngModel)]="filtros.muestra"
+               (ngModelChange)="aplicarFiltro()" placeholder="Buscar por nombre..." />
+      </div>
+
+      <div class="filtro-campo">
+        <label>Espectrometro</label>
+        <select [(ngModel)]="filtros.espectrometro" (ngModelChange)="aplicarFiltro()">
+          <option value="">Todos</option>
+          <option *ngFor="let e of espectrometrosDisponibles" [value]="e">{{ e }}</option>
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label>Sonda</label>
+        <select [(ngModel)]="filtros.sonda" (ngModelChange)="aplicarFiltro()">
+          <option value="">Todas</option>
+          <option *ngFor="let s of sondasDisponibles" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label>Estado</label>
+        <select [(ngModel)]="filtros.estado" (ngModelChange)="aplicarFiltro()">
+          <option value="">Todos</option>
+          <option value="true">Completado</option>
+          <option value="false">Pendiente</option>
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label>Fecha desde</label>
+        <input type="date" [(ngModel)]="filtros.fechaDesde" (ngModelChange)="aplicarFiltro()" />
+      </div>
+
+      <div class="filtro-campo">
+        <label>Fecha hasta</label>
+        <input type="date" [(ngModel)]="filtros.fechaHasta" (ngModelChange)="aplicarFiltro()" />
+      </div>
+    </div>
+    <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
+
+  <!-- Tabla de registros -->
+  <ng-container *ngIf="registros.length > 0; else sinRegistros">
+    <div class="tabla-scroll">
+      <table class="tabla-registros">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Muestra</th>
+            <th>Espectrometro</th>
+            <th>Sonda</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of registrosPagina">
+            <td>{{ formatFecha(r.fecha_entrada) }}</td>
+            <td>{{ r.muestra }}</td>
+            <td>{{ r.espectrometro }}</td>
+            <td>{{ r.sonda }}</td>
+            <td [class.completado]="r.completo" [class.pendiente]="!r.completo">
+              {{ r.completo ? 'Completado' : 'Pendiente' }}
+            </td>
+          </tr>
+          <tr *ngIf="registrosFiltrados.length === 0">
+            <td colspan="5" class="sin-coincidencias">
+              No hay registros que coincidan con los filtros aplicados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div class="paginacion">
+      <div class="paginacion-info">
+        Mostrando {{ rangoInicio }} – {{ rangoFin }} de {{ registrosFiltrados.length }} registros
+      </div>
+
+      <div class="paginacion-controles">
+        <button class="btn-pag" (click)="cambiarPagina(1)" [disabled]="pagina === 1">«</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">‹</button>
+        <button *ngFor="let p of paginasVisibles" class="btn-pag"
+                [class.activo]="p === pagina" (click)="cambiarPagina(p)">{{ p }}</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina === totalPaginas">›</button>
+        <button class="btn-pag" (click)="cambiarPagina(totalPaginas)" [disabled]="pagina === totalPaginas">»</button>
+      </div>
+
+      <div class="paginacion-tamano">
+        <label>Por pagina:</label>
+        <select [(ngModel)]="tamanoPagina" (ngModelChange)="cambiarTamano($event)">
+          <option *ngFor="let t of tamanosPagina" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #sinRegistros>
+    <p class="sin-datos">No tienes registros disponibles aun.</p>
+  </ng-template>
+
+</div>

@@ -22,9 +22,10 @@ export class GestionUsuariosService {
     );
   }
 
-getUsuarioConMuestras(id: string): Observable<any> {
-    // Esto llamará a http://localhost:3000/api/usuarios/ID_DEL_USUARIO/muestras
-    return this.http.get<any>(`${this.apiUrl}/${id}/muestras`);
+  getUsuarioConMuestras(id: string): Observable<any> {
+    return this.http
+      .get<{ message: string; data: any }>(`${this.apiUrl}/${id}/muestras`)
+      .pipe(map(r => r.data));
   }
 
   borrarUsuario(id: string): Observable<any> {

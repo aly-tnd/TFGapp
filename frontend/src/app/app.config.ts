@@ -5,6 +5,7 @@ import { provideHttpClient, HTTP_INTERCEPTORS, withInterceptorsFromDi } from '@a
 import { CrearEspectrometroComponent } from './ApiGestionFront/components/crear-espectrometro/crear-espectrometro.component';
 import { CrearUsuarioComponent } from './ApiGestionFront/components/crear-usuario/crear-usuario.component';
 import { CrearRegistroComponent } from './ApiGestionFront/components/crear-registro/crear-registro.component';
+import { MisRegistrosComponent } from './ApiGestionFront/components/mis-registros/mis-registros.component';
 import { ListaUsuariosComponent } from './ApiGestionFront/components/listar-usuarios/listar-usuarios.component';
 import { VerUsuarioComponent } from './ApiGestionFront/components/ver-usuario/ver-usuario.component';
 import { LoginComponent } from './ApiGestionFront/components/login/login.component';
@@ -26,8 +27,9 @@ const routes: Routes = [
   { path: 'nuevo-espectrometro', component: CrearEspectrometroComponent, canActivate: [adminGuard] },
   { path: 'usuario/:id',         component: VerUsuarioComponent,         canActivate: [adminGuard] },
 
-  // Ruta de USUARIO NORMAL
-  { path: 'nuevo-registro', component: CrearRegistroComponent, canActivate: [userGuard] },
+  // Rutas de USUARIO NORMAL
+  { path: 'nuevo-registro',  component: CrearRegistroComponent, canActivate: [userGuard] },
+  { path: 'mis-registros',   component: MisRegistrosComponent,  canActivate: [userGuard] },
 
   // Redirecciones
   { path: '', redirectTo: '/login', pathMatch: 'full' },
