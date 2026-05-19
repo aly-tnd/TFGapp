@@ -41,6 +41,10 @@ app.post('/api/registros', authMiddleware, apiController.createRegistro);
 app.post('/api/espectrometros', authMiddleware, espectrometroController.crear);
 app.get('/api/espectrometros',  authMiddleware, espectrometroController.listar);
 
+// Ediciones / observaciones de registros
+app.post('/api/ediciones',                authMiddleware, apiController.createEdicion);
+app.get('/api/ediciones/:registroId',     authMiddleware, apiController.getEdiciones);
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;

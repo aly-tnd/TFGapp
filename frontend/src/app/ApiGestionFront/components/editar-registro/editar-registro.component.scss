@@ -1,0 +1,196 @@
+.editar-page {
+  padding: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Cabecera */
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+}
+
+.btn-volver {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  color: #555;
+  &:hover { background-color: #f0f0f0; }
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+/* Bloque de info de referencia */
+.info-referencia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem 1rem;
+  background: #f0f4f8;
+  border: 1px solid #d0dce8;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #607d8b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.info-valor {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Campos del formulario */
+.form-edicion {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.campo-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+select, input[type="text"], textarea {
+  padding: 9px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #333;
+  background: white;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* Input que aparece al seleccionar "Otro" */
+.input-otro {
+  margin-top: 4px;
+  border-color: #3498db;
+  background: #f0f8ff;
+}
+
+/* Checkboxes para incidencias */
+.checkboxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.4rem 0.75rem;
+  padding: 8px 0;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: #333;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    accent-color: #3498db;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+/* Botones de acción */
+.form-acciones {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-guardar {
+  padding: 10px 24px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover { background-color: #2980b9; }
+}
+
+.btn-limpiar-form {
+  padding: 10px 24px;
+  background-color: white;
+  color: #555;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover { background-color: #f5f5f5; }
+}
+
+.msg-exito {
+  color: #388e3c;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.msg-error {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}

@@ -72,6 +72,7 @@
             <th>Espectrometro</th>
             <th>Sonda</th>
             <th>Estado</th>
+            <th class="th-acciones">Edicion</th>
           </tr>
         </thead>
         <tbody>
@@ -82,6 +83,14 @@
             <td>{{ r.sonda }}</td>
             <td [class.completado]="r.completo" [class.pendiente]="!r.completo">
               {{ r.completo ? 'Completado' : 'Pendiente' }}
+            </td>
+            <td class="td-acciones">
+              <button class="btn-accion" (click)="irAEditar(r)" title="Editar registro">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="btn-accion" (click)="irAVerEdiciones(r)" title="Ver ediciones">
+                <mat-icon>visibility</mat-icon>
+              </button>
             </td>
           </tr>
           <tr *ngIf="registrosFiltrados.length === 0">

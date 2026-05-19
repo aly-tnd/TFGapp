@@ -6,6 +6,8 @@ import { CrearEspectrometroComponent } from './ApiGestionFront/components/crear-
 import { CrearUsuarioComponent } from './ApiGestionFront/components/crear-usuario/crear-usuario.component';
 import { CrearRegistroComponent } from './ApiGestionFront/components/crear-registro/crear-registro.component';
 import { MisRegistrosComponent } from './ApiGestionFront/components/mis-registros/mis-registros.component';
+import { EditarRegistroComponent } from './ApiGestionFront/components/editar-registro/editar-registro.component';
+import { VerEdicionesComponent } from './ApiGestionFront/components/ver-ediciones/ver-ediciones.component';
 import { ListaUsuariosComponent } from './ApiGestionFront/components/listar-usuarios/listar-usuarios.component';
 import { VerUsuarioComponent } from './ApiGestionFront/components/ver-usuario/ver-usuario.component';
 import { LoginComponent } from './ApiGestionFront/components/login/login.component';
@@ -28,8 +30,10 @@ const routes: Routes = [
   { path: 'usuario/:id',         component: VerUsuarioComponent,         canActivate: [adminGuard] },
 
   // Rutas de USUARIO NORMAL
-  { path: 'nuevo-registro',  component: CrearRegistroComponent, canActivate: [userGuard] },
-  { path: 'mis-registros',   component: MisRegistrosComponent,  canActivate: [userGuard] },
+  { path: 'nuevo-registro',        component: CrearRegistroComponent,  canActivate: [userGuard] },
+  { path: 'mis-registros',         component: MisRegistrosComponent,   canActivate: [userGuard] },
+  { path: 'editar-registro/:id',   component: EditarRegistroComponent, canActivate: [userGuard] },
+  { path: 'ver-ediciones/:id',     component: VerEdicionesComponent,   canActivate: [userGuard] },
 
   // Redirecciones
   { path: '', redirectTo: '/login', pathMatch: 'full' },

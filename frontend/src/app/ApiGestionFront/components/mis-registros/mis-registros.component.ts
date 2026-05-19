@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RegistroService } from '../../../services/registro.service';
@@ -30,7 +31,10 @@ export class MisRegistrosComponent implements OnInit {
   pagina      = 1;
   tamanoPagina = 5;
 
-  constructor(private registroService: RegistroService) {}
+  constructor(
+    private registroService: RegistroService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.registroService.getMisRegistros().subscribe({
@@ -124,6 +128,14 @@ export class MisRegistrosComponent implements OnInit {
       timeZone: 'Europe/Madrid',
       day: '2-digit', month: '2-digit', year: 'numeric'
     }).format(new Date(fechaStr));
+  }
+
+  irAEditar(registro: any) {
+    this.router.navigate(['/editar-registro', registro.id], { state: { registro } });
+  }
+
+  irAVerEdiciones(registro: any) {
+    this.router.navigate(['/ver-ediciones', registro.id], { state: { registro } });
   }
 
   // Exporta todos los registros del usuario, sin respetar filtros ni paginacion

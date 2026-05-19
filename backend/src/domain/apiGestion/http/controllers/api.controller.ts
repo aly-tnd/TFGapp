@@ -6,6 +6,7 @@ import { LoginUseCase } from '../../application/use-cases/login.use-case';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { RegistroRepository } from '../../domain/repositories/registro.repository';
+import { EdicionRepository } from '../../domain/repositories/edicion.repository';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { AppError, asyncHandler } from '../../../../shared/middleware/error.middleware';
 import { AuthRequest } from '../../../../shared/middleware/auth.middleware';
@@ -18,7 +19,8 @@ export class ApiController {
     private readonly loginUseCase: LoginUseCase,
     private readonly userRepository: UserRepository,
     private readonly registroRepository: RegistroRepository,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly edicionRepository: EdicionRepository
   ) {}
 
   // Crear nuevo usuario (admin)
@@ -115,6 +117,20 @@ export class ApiController {
     }
 
     return res.status(200).json({ message: 'Perfil actualizado correctamente' });
+  });
+
+  // Crear una edicion/observacion para un registro
+  createEdicion = asyncHandler(async (req: Request, res: Response) => {
+    const { id: usuario_id } = (req as AuthRequest).user!;
+    const result = await this.edicionRepository.crear({ ...req.body, usuario_id });
+    return res.status(201).json({ message: 'Edicion creada', data: result });
+  });
+
+  // Obtener ediciones de un registro
+  getEdiciones = asyncHandler(async (req: Request, res: Response) => {
+    const registroId = String(req.params['registroId']);
+    const ediciones = await this.edicionRepository.findByRegistroId(registroId);
+    return res.status(200).json({ message: 'Ediciones obtenidas', data: ediciones });
   });
 
   // Eliminar cuenta propia (solo usuarios normales, requiere contraseña)

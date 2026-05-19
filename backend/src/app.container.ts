@@ -5,6 +5,7 @@ import { EspectrometroController } from "./domain/espectrometro/infrastructure/c
 import { MongoEspectrometroRepository } from "./domain/espectrometro/infrastructure/db/mongo-espectrometro.repository";
 import { MongoUserRepository } from "./domain/apiGestion/infrastructure/db/mongo/repositories/mongo-user.repository";
 import { MongoRegistroRepository } from "./domain/apiGestion/infrastructure/db/mongo/repositories/MongoRegistroRepository";
+import { MongoEdicionRepository } from "./domain/apiGestion/infrastructure/db/mongo/repositories/MongoEdicionRepository";
 import { CrearUsuarioUseCase } from "./domain/apiGestion/application/use-cases/create-user.use-cases";
 import { ListUsersUseCase } from "./domain/apiGestion/application/use-cases/listar-usuarios.use-cases";
 import { ObtenerUsuarioYMuestrasUseCase } from "./domain/apiGestion/application/use-cases/obtener-usuario-muestras.use-case";
@@ -15,6 +16,7 @@ import { AuthService } from "./shared/services/auth.service";
 // ============= REPOSITORIES =============
 const userRepository = new MongoUserRepository();
 const registroRepository = new MongoRegistroRepository();
+const edicionRepository = new MongoEdicionRepository();
 const espectrometroRepository = new MongoEspectrometroRepository();
 
 // ============= SERVICES =============
@@ -41,7 +43,8 @@ export const apiController = new ApiController(
   loginUseCase,
   userRepository,
   registroRepository,
-  authService
+  authService,
+  edicionRepository
 );
 
 export const espectrometroController = new EspectrometroController(

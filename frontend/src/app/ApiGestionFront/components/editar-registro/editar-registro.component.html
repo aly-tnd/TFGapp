@@ -1,0 +1,139 @@
+<div class="editar-page">
+
+  <!-- Cabecera -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-volver" routerLink="/mis-registros" title="Volver">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>Edicion de Registro</h2>
+    </div>
+  </div>
+
+  <!-- Informacion de referencia (solo lectura) -->
+  <div class="info-referencia">
+    <div class="info-item">
+      <span class="info-label">Usuario</span>
+      <span class="info-valor">{{ nombreUsuario }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Espectrometro</span>
+      <span class="info-valor">{{ registro?.espectrometro || '—' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Sonda</span>
+      <span class="info-valor">{{ registro?.sonda || '—' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Muestra</span>
+      <span class="info-valor">{{ registro?.muestra || '—' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Fecha de edicion</span>
+      <span class="info-valor">{{ fechaHoy }}</span>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <form class="form-edicion" (ngSubmit)="guardar()">
+
+    <!-- Secuencia -->
+    <div class="campo">
+      <label class="campo-label">Secuencia</label>
+      <select [(ngModel)]="form.secuencia" name="secuencia">
+        <option value="">-- Selecciona una secuencia --</option>
+        <option *ngFor="let op of opcionesSecuencia" [value]="op">{{ op }}</option>
+      </select>
+      <input *ngIf="form.secuencia === 'Otro'" type="text"
+             [(ngModel)]="form.secuencia_otro" name="secuencia_otro"
+             class="input-otro" placeholder="Especifica la secuencia utilizada..." />
+    </div>
+
+    <!-- Solvente -->
+    <div class="campo">
+      <label class="campo-label">Solvente</label>
+      <select [(ngModel)]="form.solvente" name="solvente">
+        <option value="">-- Selecciona un solvente --</option>
+        <option *ngFor="let op of opcionesSolvente" [value]="op">{{ op }}</option>
+      </select>
+      <input *ngIf="form.solvente === 'Otro'" type="text"
+             [(ngModel)]="form.solvente_otro" name="solvente_otro"
+             class="input-otro" placeholder="Especifica el solvente..." />
+    </div>
+
+    <!-- Concentracion estimada -->
+    <div class="campo">
+      <label class="campo-label">Concentracion estimada</label>
+      <input type="text" [(ngModel)]="form.concentracion_estimada" name="concentracion_estimada"
+             placeholder="p. ej. 10 mg/mL en CDCl3" />
+    </div>
+
+    <!-- Estado de la muestra -->
+    <div class="campo">
+      <label class="campo-label">Estado de la muestra</label>
+      <select [(ngModel)]="form.estado_muestra" name="estado_muestra">
+        <option value="">-- Selecciona el estado --</option>
+        <option *ngFor="let op of opcionesEstado" [value]="op">{{ op }}</option>
+      </select>
+    </div>
+
+    <!-- Proposito del experimento -->
+    <div class="campo">
+      <label class="campo-label">Proposito del experimento</label>
+      <select [(ngModel)]="form.proposito" name="proposito">
+        <option value="">-- Selecciona el proposito --</option>
+        <option *ngFor="let op of opcionesProposito" [value]="op">{{ op }}</option>
+      </select>
+      <input *ngIf="form.proposito === 'Otro'" type="text"
+             [(ngModel)]="form.proposito_otro" name="proposito_otro"
+             class="input-otro" placeholder="Describe el proposito del experimento..." />
+    </div>
+
+    <!-- Incidencias / calidad (multi-seleccion) -->
+    <div class="campo">
+      <label class="campo-label">Incidencias / calidad</label>
+      <div class="checkboxes-grid">
+        <label *ngFor="let op of opcionesIncidencias" class="checkbox-item">
+          <input type="checkbox" [checked]="tieneIncidencia(op)" (change)="toggleIncidencia(op)" />
+          <span>{{ op }}</span>
+        </label>
+      </div>
+      <input *ngIf="tieneIncidencia('Otro')" type="text"
+             [(ngModel)]="form.incidencias_otro" name="incidencias_otro"
+             class="input-otro" placeholder="Describe la incidencia observada..." />
+    </div>
+
+    <!-- Descripcion de incidencias -->
+    <div class="campo">
+      <label class="campo-label">Descripcion de incidencias</label>
+      <textarea [(ngModel)]="form.descripcion_incidencias" name="descripcion_incidencias"
+                rows="3" placeholder="Detalle las incidencias observadas durante la adquisicion..."></textarea>
+    </div>
+
+    <!-- Se repitio la adquisicion -->
+    <div class="campo">
+      <label class="campo-label">¿Se repitio la adquisicion?</label>
+      <select [(ngModel)]="form.repetida_adquisicion" name="repetida_adquisicion">
+        <option value="">-- Selecciona --</option>
+        <option *ngFor="let op of opcionesRepeticion" [value]="op">{{ op }}</option>
+      </select>
+    </div>
+
+    <!-- Observaciones generales -->
+    <div class="campo">
+      <label class="campo-label">Observaciones generales</label>
+      <textarea [(ngModel)]="form.observaciones" name="observaciones"
+                rows="5" placeholder="Cualquier observacion adicional que no encaje en los campos anteriores..."></textarea>
+    </div>
+
+    <!-- Acciones del formulario -->
+    <div class="form-acciones">
+      <button type="submit" class="btn-guardar">Guardar edicion</button>
+      <button type="button" class="btn-limpiar-form" (click)="limpiar()">Limpiar formulario</button>
+    </div>
+
+    <p *ngIf="mensajeExito" class="msg-exito">{{ mensajeExito }}</p>
+    <p *ngIf="mensajeError" class="msg-error">{{ mensajeError }}</p>
+
+  </form>
+</div>

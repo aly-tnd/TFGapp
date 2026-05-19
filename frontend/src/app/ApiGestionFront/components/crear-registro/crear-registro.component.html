@@ -27,12 +27,17 @@
   </mat-form-field>
 
   <div class="opciones-checkbox">
-    <mat-checkbox [(ngModel)]="registro.finalizado"      color="primary">Finalizado</mat-checkbox>
+    <mat-checkbox [(ngModel)]="registro.finalizado"       color="primary">Finalizado</mat-checkbox>
     <mat-checkbox [(ngModel)]="registro.recuperarMuestra" color="primary">Recuperar muestra</mat-checkbox>
   </div>
 
   <button mat-raised-button color="primary" class="boton-guardar" (click)="guardarMuestra()">
     Guardar muestra
+  </button>
+
+  <button class="boton-importar" (click)="abrirModalImportar()">
+    <mat-icon>upload_file</mat-icon>
+    Importar desde CSV
   </button>
 
   <!-- Grafico de uso de sondas para el espectrometro seleccionado -->
@@ -44,4 +49,45 @@
     [registros]="misRegistros">
   </app-grafico-espectrometro>
 
+</div>
+
+<!-- Input de archivo oculto (fuera del ngIf del modal) -->
+<input #inputCSV type="file" accept=".csv" class="input-oculto" (change)="onFileSelected($event)" />
+
+<!-- Modal de importacion -->
+<div class="modal-overlay" *ngIf="modalImportarVisible" (click)="cerrarModalImportar()">
+  <div class="modal-importar" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Importar muestras desde CSV</h3>
+      <button class="btn-cerrar-modal" (click)="cerrarModalImportar()" [disabled]="importando">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-cuerpo">
+      <p class="modal-descripcion">
+        Descarga la plantilla, rellena los datos y luego importa el archivo.
+        Las columnas son: <strong>Fecha</strong> (dd/mm/aaaa), <strong>Muestra</strong>,
+        <strong>Espectrometro</strong>, <strong>Sonda</strong> y <strong>Estado</strong>
+        (Completado / Pendiente).
+      </p>
+
+      <div class="modal-botones">
+        <button class="btn-plantilla" (click)="descargarPlantilla()">
+          <mat-icon>download</mat-icon>
+          Descargar plantilla
+        </button>
+        <button class="btn-importar-csv" (click)="seleccionarArchivo()" [disabled]="importando">
+          <mat-icon>{{ importando ? 'hourglass_empty' : 'upload' }}</mat-icon>
+          {{ importando ? 'Importando...' : 'Seleccionar archivo CSV' }}
+        </button>
+      </div>
+
+      <p *ngIf="resultadoImport" class="resultado-import" [class.error]="hayErroresImport">
+        {{ resultadoImport }}
+      </p>
+    </div>
+
+  </div>
 </div>

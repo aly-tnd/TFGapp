@@ -1,0 +1,133 @@
+<div class="ediciones-page">
+
+  <!-- Cabecera -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-volver" routerLink="/mis-registros" title="Volver">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2>Historial de ediciones</h2>
+        <span class="subtitulo" *ngIf="registro">
+          {{ registro.muestra }} &mdash; {{ registro.espectrometro }}
+        </span>
+      </div>
+    </div>
+    <button class="btn-orden" (click)="toggleOrden()" title="Cambiar orden">
+      Fecha {{ ordenDesc ? '&#8595;' : '&#8593;' }}
+    </button>
+  </div>
+
+  <!-- Tabla de ediciones -->
+  <ng-container *ngIf="ediciones.length > 0; else sinEdiciones">
+    <div class="tabla-scroll">
+      <table class="tabla-ediciones">
+        <thead>
+          <tr>
+            <th>Fecha de edicion</th>
+            <th class="th-acciones">Ver</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of edicionesPagina">
+            <td>{{ formatFechaCompleta(e.fecha_edicion) }}</td>
+            <td class="td-accion">
+              <button class="btn-ojo" (click)="abrirModal(e)" title="Ver detalle">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginacion -->
+    <div class="paginacion">
+      <div class="paginacion-info">
+        Mostrando {{ rangoInicio }} – {{ rangoFin }} de {{ edicionesOrdenadas.length }} ediciones
+      </div>
+      <div class="paginacion-controles">
+        <button class="btn-pag" (click)="cambiarPagina(1)" [disabled]="pagina === 1">«</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">‹</button>
+        <button *ngFor="let p of paginasVisibles" class="btn-pag"
+                [class.activo]="p === pagina" (click)="cambiarPagina(p)">{{ p }}</button>
+        <button class="btn-pag" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina === totalPaginas">›</button>
+        <button class="btn-pag" (click)="cambiarPagina(totalPaginas)" [disabled]="pagina === totalPaginas">»</button>
+      </div>
+      <div class="paginacion-tamano">
+        <label>Por pagina:</label>
+        <select [(ngModel)]="tamanoPagina" (ngModelChange)="cambiarTamano($event)">
+          <option *ngFor="let t of tamanosPagina" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #sinEdiciones>
+    <p class="sin-datos">No hay ediciones registradas para esta muestra aun.</p>
+  </ng-template>
+
+</div>
+
+<!-- Modal de detalle de edicion -->
+<div class="modal-overlay" *ngIf="edicionSeleccionada" (click)="cerrarModal()">
+  <div class="modal-contenido" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Edicion del {{ formatFechaCompleta(edicionSeleccionada.fecha_edicion) }}</h3>
+      <div class="modal-acciones">
+        <button class="btn-pdf" (click)="exportarPDF(edicionSeleccionada)">Exportar PDF</button>
+        <button class="btn-cerrar" (click)="cerrarModal()" title="Cerrar">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-cuerpo">
+      <dl class="detalle-lista">
+        <div class="detalle-fila">
+          <dt>Secuencia</dt>
+          <dd>{{ valorMostrado(edicionSeleccionada.secuencia, edicionSeleccionada.secuencia_otro) }}</dd>
+        </div>
+        <div class="detalle-fila">
+          <dt>Solvente</dt>
+          <dd>{{ valorMostrado(edicionSeleccionada.solvente, edicionSeleccionada.solvente_otro) }}</dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.concentracion_estimada">
+          <dt>Concentracion estimada</dt>
+          <dd>{{ edicionSeleccionada.concentracion_estimada }}</dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.estado_muestra">
+          <dt>Estado de la muestra</dt>
+          <dd>{{ edicionSeleccionada.estado_muestra }}</dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.proposito">
+          <dt>Proposito del experimento</dt>
+          <dd>{{ valorMostrado(edicionSeleccionada.proposito, edicionSeleccionada.proposito_otro) }}</dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.incidencias?.length">
+          <dt>Incidencias / calidad</dt>
+          <dd>
+            {{ edicionSeleccionada.incidencias.join(', ') }}
+            <span *ngIf="edicionSeleccionada.incidencias_otro">
+              &mdash; {{ edicionSeleccionada.incidencias_otro }}
+            </span>
+          </dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.descripcion_incidencias">
+          <dt>Descripcion de incidencias</dt>
+          <dd>{{ edicionSeleccionada.descripcion_incidencias }}</dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.repetida_adquisicion">
+          <dt>Se repitio la adquisicion</dt>
+          <dd>{{ edicionSeleccionada.repetida_adquisicion }}</dd>
+        </div>
+        <div class="detalle-fila" *ngIf="edicionSeleccionada.observaciones">
+          <dt>Observaciones generales</dt>
+          <dd class="observaciones-texto">{{ edicionSeleccionada.observaciones }}</dd>
+        </div>
+      </dl>
+    </div>
+
+  </div>
+</div>
