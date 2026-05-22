@@ -18,7 +18,7 @@ export interface LoginResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:3000/api';
+  private readonly apiUrl = 'https://tfgapp.onrender.com/api';
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.getStoredUser());
   public currentUser$ = this.currentUserSubject.asObservable();
 

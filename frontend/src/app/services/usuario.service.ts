@@ -8,7 +8,7 @@ import { Usuario } from '../ApiGestionFront/class/usuario';
   providedIn: 'root'
 })
 export class GestionUsuariosService {
-  private readonly apiUrl = 'http://localhost:3000/api/usuarios';
+  private readonly apiUrl = 'https://tfgapp.onrender.com/api/usuarios';
 
   constructor(private http: HttpClient) {}
 
