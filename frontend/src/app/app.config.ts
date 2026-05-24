@@ -2,7 +2,6 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter, Routes } from '@angular/router';
 import { provideHttpClient, HTTP_INTERCEPTORS, withInterceptorsFromDi } from '@angular/common/http';
 
-import { CrearEspectrometroComponent } from './ApiGestionFront/components/crear-espectrometro/crear-espectrometro.component';
 import { CrearUsuarioComponent } from './ApiGestionFront/components/crear-usuario/crear-usuario.component';
 import { CrearRegistroComponent } from './ApiGestionFront/components/crear-registro/crear-registro.component';
 import { MisRegistrosComponent } from './ApiGestionFront/components/mis-registros/mis-registros.component';
@@ -26,7 +25,6 @@ const routes: Routes = [
   // Rutas de ADMIN
   { path: 'listar-usuarios',     component: ListaUsuariosComponent,     canActivate: [adminGuard] },
   { path: 'nuevo-usuario',       component: CrearUsuarioComponent,       canActivate: [adminGuard] },
-  { path: 'nuevo-espectrometro', component: CrearEspectrometroComponent, canActivate: [adminGuard] },
   { path: 'usuario/:id',         component: VerUsuarioComponent,         canActivate: [adminGuard] },
 
   // Rutas de USUARIO NORMAL
